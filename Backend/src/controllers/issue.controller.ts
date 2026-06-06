@@ -4,6 +4,7 @@ import { getIssue, getRepositoryIssues } from "../services/github.service";
 import { analyzeIssue } from "../services/gemini.service";
 import { saveIssueAnalysis } from "../services/issue.service";
 import prisma from "../config/prisma";
+import { getIssueAnalysisHistory } from "../services/issue.service";
 
 export const analyzeIssueController = async (req: Request, res: Response) => {
   try {
@@ -74,6 +75,28 @@ export const getRepositoryIssuesController = async (
     });
   } catch (error: any) {
     res.status(400).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+export const getIssueHistoryController = async (
+  req: any,
+  res: Response
+) => {
+  try {
+    const history =
+      await getIssueAnalysisHistory(
+        req.user.userId
+      );
+
+    res.status(200).json({
+      success: true,
+      history,
+    });
+  } catch (error: any) {
+    res.status(500).json({
       success: false,
       message: error.message,
     });

@@ -22,3 +22,21 @@ export const saveIssueAnalysis = async (
     },
   });
 };
+
+export const getIssueAnalysisHistory = async (
+  userId: number
+) => {
+  return prisma.issueAnalysis.findMany({
+    where: {
+      repository: {
+        userId,
+      },
+    },
+    include: {
+      repository: true,
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+};
