@@ -39,4 +39,28 @@ router.get("/github-test", async (_req, res) => {
   }
 });
 
+import { generateRepositorySummary } from "../services/gemini.service";
+
+router.get("/gemini-test", async (_req, res) => {
+  try {
+    const result = await generateRepositorySummary(
+      "This is a React frontend project.",
+      [
+        { path: "src/components" },
+        { path: "src/hooks" },
+      ]
+    );
+
+    res.json({
+      success: true,
+      result,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+    });
+  }
+});
 export default router;

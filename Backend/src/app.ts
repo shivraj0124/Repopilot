@@ -9,17 +9,14 @@ app.use(express.json());
 import testRoutes from "./routes/test.routes";
 import authRoutes from "./routes/auth.routes";
 import repositoryRoutes from "./routes/repository.routes";
+import issueRoutes from "./routes/issue.routes";
+
 app.use("/api/auth", authRoutes);
-app.use(
-  "/api/repositories",
-  repositoryRoutes
-);
+app.use("/api/repositories",repositoryRoutes);
+app.use("/api/issues", issueRoutes);
 
 
 app.use("/api", testRoutes);
 
-app.get("/", (req, res) => {
-  res.send("RepoPilot API Running");
-});
 
 export default app;

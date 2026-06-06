@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { analyzeRepository, getHistory } from "../controllers/repository.controller";
+import { analyzeIssueController ,getRepositoryIssuesController} from "../controllers/issue.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -7,12 +7,13 @@ const router = Router();
 router.post(
   "/analyze",
   authMiddleware,
-  analyzeRepository
+  analyzeIssueController
 );
 
-router.get(
-  "/history",
+router.post(
+  "/list",
   authMiddleware,
-  getHistory
+  getRepositoryIssuesController
 );
+
 export default router;
