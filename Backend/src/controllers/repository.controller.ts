@@ -65,6 +65,7 @@ export const analyzeRepository = async (
       repository: repositoryRecord,
       analysis: analysisRecord,
       aiAnalysis,
+      tree
     });
   } catch (error: any) {
     res.status(400).json({
