@@ -23,6 +23,7 @@ export const authMiddleware = (
     );
 
     req.user = decoded;
+    console.log("Authenticated user:", req.user);
 
     next();
   } catch {

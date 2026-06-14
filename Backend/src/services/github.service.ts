@@ -107,3 +107,147 @@ export const getRepositoryIssues = async (
     url: issue.html_url,
   }));
 };
+
+export const getTrendingRepositories =
+  async () => {
+    const response =
+      await octokit.request(
+        "GET /search/repositories",
+        {
+          q: "stars:>10000",
+          sort: "stars",
+          order: "desc",
+          per_page: 12,
+        }
+      );
+
+    return response.data.items.map(
+      (repo: any) => ({
+        id: repo.id,
+        name: repo.full_name,
+        description:
+          repo.description,
+        stars:
+          repo.stargazers_count,
+        forks: repo.forks_count,
+        language:
+          repo.language,
+        url: repo.html_url,
+      })
+    );
+  };
+
+export const getTrendingIssues =
+  async () => {
+    const response =
+      await octokit.request(
+        "GET /search/issues",
+        {
+          q: "is:issue is:open comments:>5",
+          sort: "comments",
+          order: "desc",
+          per_page: 20,
+        }
+      );
+
+    return response.data.items.map(
+      (issue: any) => ({
+        id: issue.id,
+        title: issue.title,
+        url: issue.html_url,
+        comments:
+          issue.comments,
+        repository:
+          issue.repository_url
+            .split("/")
+            .slice(-2)
+            .join("/"),
+        labels:
+          issue.labels?.map(
+            (label: any) =>
+              label.name
+          ) || [],
+      })
+    );
+  };
+
+/*
+|--------------------------------------------------------------------------
+| Good First Issues
+|--------------------------------------------------------------------------
+*/
+
+export const getGoodFirstIssues =
+  async () => {
+    const response =
+      await octokit.request(
+        "GET /search/issues",
+        {
+          q: 'is:issue is:open label:"good first issue"',
+          sort: "comments",
+          order: "desc",
+          per_page: 20,
+        }
+      );
+
+    return response.data.items.map(
+      (issue: any) => ({
+        id: issue.id,
+        title: issue.title,
+        url: issue.html_url,
+        comments:
+          issue.comments,
+        repository:
+          issue.repository_url
+            .split("/")
+            .slice(-2)
+            .join("/"),
+        labels:
+          issue.labels?.map(
+            (label: any) =>
+              label.name
+          ) || [],
+      })
+    );
+  };
+
+/*
+|--------------------------------------------------------------------------
+| Search Issues
+|--------------------------------------------------------------------------
+*/
+
+export const searchIssues = async (
+  query: string
+) => {
+  const response =
+    await octokit.request(
+      "GET /search/issues",
+      {
+        q: `is:issue is:open ${query}`,
+        sort: "comments",
+        order: "desc",
+        per_page: 20,
+      }
+    );
+
+  return response.data.items.map(
+    (issue: any) => ({
+      id: issue.id,
+      title: issue.title,
+      url: issue.html_url,
+      comments:
+        issue.comments,
+      repository:
+        issue.repository_url
+          .split("/")
+          .slice(-2)
+          .join("/"),
+      labels:
+        issue.labels?.map(
+          (label: any) =>
+            label.name
+        ) || [],
+    })
+  );
+};

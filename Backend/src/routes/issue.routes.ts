@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { analyzeIssueController ,getIssueHistoryController,getRepositoryIssuesController} from "../controllers/issue.controller";
+import { analyzeIssueController ,getIssueHistoryController,getRepositoryIssuesController,getTrendingIssuesController,getGoodFirstIssuesController,searchIssuesController} from "../controllers/issue.controller";
 import { authMiddleware } from "../middleware/auth.middleware";
 
 const router = Router();
@@ -39,6 +39,21 @@ router.get(
   "/history",
   authMiddleware,
   getIssueHistoryController
+);
+
+router.get(
+  "/trending",
+  getTrendingIssuesController
+);
+
+router.get(
+  "/good-first",
+  getGoodFirstIssuesController
+);
+
+router.get(
+  "/search",
+  searchIssuesController
 );
 
 export default router;

@@ -7,7 +7,6 @@ import { useEffect, useState, useRef } from "react";
 import Navbar from "../components/navbar/Navbar";
 import Footer from "../components/Footer";
 
-/* ─── Animated grid background ────────────────────────────────────────── */
 function GridBackground() {
   return (
     <div className="rp-grid-bg" aria-hidden="true">
@@ -17,7 +16,6 @@ function GridBackground() {
   );
 }
 
-/* ─── Floating badge ───────────────────────────────────────────────────── */
 function Badge({ children }) {
   return (
     <span className="rp-hero-badge">
@@ -27,7 +25,6 @@ function Badge({ children }) {
   );
 }
 
-/* ─── Animated counter ─────────────────────────────────────────────────── */
 function Counter({ end, suffix = "" }) {
   const [val, setVal] = useState(0);
   const ref = useRef(null);
@@ -49,7 +46,6 @@ function Counter({ end, suffix = "" }) {
   return <span ref={ref}>{val.toLocaleString()}{suffix}</span>;
 }
 
-/* ─── Feature card ─────────────────────────────────────────────────────── */
 function FeatureCard({ icon: Icon, accent, title, desc, items }) {
   return (
     <div className="rp-feature-card" style={{ "--accent": accent }}>
@@ -70,7 +66,6 @@ function FeatureCard({ icon: Icon, accent, title, desc, items }) {
   );
 }
 
-/* ─── Step card ────────────────────────────────────────────────────────── */
 function StepCard({ num, title, desc }) {
   return (
     <div className="rp-step-card">
@@ -80,8 +75,6 @@ function StepCard({ num, title, desc }) {
     </div>
   );
 }
-
-/* ─── Mock terminal ────────────────────────────────────────────────────── */
 function Terminal() {
   const lines = [
     { t: 80,  text: "$ repopilot analyze facebook/react",           cls: "cmd"  },
@@ -119,9 +112,6 @@ function Terminal() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════════════════════
-   PAGE
-══════════════════════════════════════════════════════════════════════════ */
 export default function HomePage() {
   return (
     <>
@@ -129,7 +119,6 @@ export default function HomePage() {
       <div className="rp-page">
         <Navbar />
 
-        {/* ── HERO ──────────────────────────────────────────────────────── */}
         <section className="rp-hero">
           <GridBackground />
           <div className="rp-hero-inner">

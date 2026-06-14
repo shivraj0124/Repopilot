@@ -14,7 +14,6 @@ import {
   HiOutlineLightningBolt,
 } from "react-icons/hi";
 
-// ─── tiny cookie helper (no dependency needed) ───────────────────────────────
 function getCookie(name: string) {
   if (typeof document === "undefined") return null;
   const match = document.cookie.match(new RegExp("(?:^|; )" + name + "=([^;]*)"));
@@ -25,7 +24,6 @@ function deleteCookie(name: string) {
   document.cookie = `${name}=; Max-Age=0; path=/`;
 }
 
-// ─── parse a JWT payload without a library ───────────────────────────────────
 function parseJwt(token: string) {
   try {
     const base64 = token.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
@@ -36,19 +34,18 @@ function parseJwt(token: string) {
 }
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);       // { name, email, avatar? }
-  const [theme, setTheme] = useState("dark");   // "dark" | "light"
+  const [user, setUser] = useState(null);       
+  const [theme, setTheme] = useState("dark");  
   const [dropOpen, setDropOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
 
-  // ── read auth token from cookie on mount ──────────────────────────────────
   useEffect(() => {
-    const token = getCookie("token"); // adjust cookie name if needed
+    const token = getCookie("token"); 
     if (token) {
       const payload = parseJwt(token);
       if (payload) {
         setUser({
-          name: payload.name || payload.username || "Developer",
+          name: payload.name || payload.username || "Developer" || "",
           email: payload.email || "",
           avatar: payload.avatar || null,
         });
@@ -56,7 +53,6 @@ export default function Navbar() {
     }
   }, []);
 
-  // ── apply theme to <html> ─────────────────────────────────────────────────
   useEffect(() => {
     const saved = localStorage.getItem("rp-theme") || "dark";
     setTheme(saved);
@@ -70,22 +66,19 @@ export default function Navbar() {
     document.documentElement.setAttribute("data-theme", next);
   };
 
-  // ── scroll shadow ─────────────────────────────────────────────────────────
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // ── logout ────────────────────────────────────────────────────────────────
   const handleLogout = () => {
-    deleteCookie("token"); // adjust name if different
+    deleteCookie("token"); 
     setUser(null);
     setDropOpen(false);
     window.location.href = "/";
   };
 
-  // ── avatar initials fallback ──────────────────────────────────────────────
   const initials = user?.name
     ? user.name.split(" ").map((w) => w[0]).join("").toUpperCase().slice(0, 2)
     : "?";
@@ -259,7 +252,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* ── Center nav links (desktop) ── */}
           <div className="hidden md:flex items-center gap-1">
             {[
               { href: "/explore",  label: "Explore",  Icon: HiOutlineCode },

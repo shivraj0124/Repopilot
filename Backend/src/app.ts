@@ -11,11 +11,13 @@ import testRoutes from "./routes/test.routes";
 import authRoutes from "./routes/auth.routes";
 import repositoryRoutes from "./routes/repository.routes";
 import issueRoutes from "./routes/issue.routes";
+import exploreRoutes from "./routes/explore.routes";
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/repositories",repositoryRoutes);
 app.use("/api/issues", issueRoutes);
-
+app.use("/api/explore",exploreRoutes);
 
 app.use("/api", testRoutes);
 app.use(
