@@ -1,0 +1,281 @@
+/* ─────────────────────────────────────────────
+   DASHBOARD THEME EXTENSIONS
+   (uses the same --bg, --surface, --border, --text
+    variables defined in homepage.css / auth.css —
+    make sure ONE of those is imported globally too)
+───────────────────────────────────────────── */
+
+/* fallback tokens in case this file is used standalone */
+:root,
+:root[data-theme="dark"] {
+  --dash-bg:          #050a18;
+  --dash-card:        #0d1628;
+  --dash-card-alt:    #080f20;
+  --dash-surface:     rgba(15, 23, 42, 0.4);
+  --dash-surface-2:   rgba(30, 41, 59, 0.6);
+  --dash-border:      rgba(30, 60, 130, 0.4);
+  --dash-border-hover:rgba(71, 85, 105, 0.8);
+  --dash-text:        #e2e8f0;
+  --dash-text-muted:  #94a3b8;
+  --dash-text-dim:    #64748b;
+  --dash-text-faint:  #475569;
+  --dash-skeleton:    rgba(30, 58, 138, 0.5);
+  --dash-skeleton-2:  rgba(30, 58, 138, 0.35);
+}
+
+:root[data-theme="light"] {
+  --dash-bg:          #f4f7ff;
+  --dash-card:        #ffffff;
+  --dash-card-alt:    #f0f4ff;
+  --dash-surface:     rgba(255, 255, 255, 0.6);
+  --dash-surface-2:   rgba(241, 245, 249, 0.9);
+  --dash-border:      rgba(147, 197, 253, 0.5);
+  --dash-border-hover:rgba(100, 116, 139, 0.4);
+  --dash-text:        #1e293b;
+  --dash-text-muted:  #475569;
+  --dash-text-dim:    #94a3b8;
+  --dash-text-faint:  #cbd5e1;
+  --dash-skeleton:    rgba(191, 219, 254, 0.8);
+  --dash-skeleton-2:  rgba(219, 234, 254, 0.6);
+}
+
+/* ── page ── */
+.dash-page {
+  background: var(--dash-bg);
+  color: var(--dash-text);
+  transition: background 0.3s, color 0.3s;
+  min-height: 100vh;
+}
+
+/* ── input card ── */
+.dash-input-card {
+  background: linear-gradient(to bottom, var(--dash-card), var(--dash-card-alt));
+  border: 1px solid var(--dash-border);
+}
+
+/* ── generic surface card ── */
+.dash-surface {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+}
+.dash-surface:hover {
+  border-color: var(--dash-border-hover);
+}
+
+/* ── skeleton ── */
+.dash-skeleton-card {
+  border: 1px solid var(--dash-border);
+  background: var(--dash-card);
+}
+.dash-skeleton-block {
+  background: var(--dash-skeleton);
+}
+.dash-skeleton-block-alt {
+  background: var(--dash-skeleton-2);
+}
+
+/* ── stat pill ── */
+.dash-stat-pill {
+  background: color-mix(in srgb, var(--blue, #3b82f6) 8%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue, #3b82f6) 18%, transparent);
+}
+
+/* ── tabs ── */
+.dash-tabs-border {
+  border-color: var(--dash-border);
+}
+.dash-tab {
+  color: var(--dash-text-dim);
+}
+.dash-tab:hover {
+  color: var(--dash-text-muted);
+  background: var(--dash-surface-2);
+}
+.dash-tab-active {
+  color: var(--blue, #3b82f6);
+  background: color-mix(in srgb, var(--blue, #3b82f6) 8%, transparent);
+}
+
+/* ── empty state ── */
+.dash-empty {
+  border: 1px dashed var(--dash-border);
+}
+
+/* ── search input ── */
+.dash-search-input {
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border);
+  color: var(--dash-text);
+}
+.dash-search-input::placeholder {
+  color: var(--dash-text-faint);
+}
+.dash-search-input:focus {
+  border-color: var(--blue, #3b82f6);
+}
+
+/* ─────────────────────────────────────────────
+   SHARED CARD / SECTION STYLES
+   (used by RepositoryAnalysisCard, IssuesList,
+    RepositoryHistory, RepositoryTree)
+───────────────────────────────────────────── */
+
+/* generic content card with hover border */
+.dash-card {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+  transition: border-color 0.2s, background 0.2s;
+}
+.dash-card:hover {
+  border-color: var(--dash-border-hover);
+}
+
+/* card variant when "active"/analysed - blue tint */
+.dash-card-active {
+  background: color-mix(in srgb, var(--blue) 6%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 22%, transparent);
+}
+
+/* divider line inside cards (e.g. analysis panel border-top) */
+.dash-divider {
+  border-color: color-mix(in srgb, var(--blue) 14%, transparent);
+}
+
+/* secondary panel background (e.g. expanded issue analysis) */
+.dash-panel {
+  background: var(--dash-card-alt);
+}
+
+/* icon badge - neutral */
+.dash-icon-badge {
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border);
+  color: var(--dash-text-dim);
+}
+.dash-card:hover .dash-icon-badge {
+  border-color: var(--dash-border-hover);
+  color: var(--dash-text-muted);
+}
+
+/* icon badge - blue accent */
+.dash-icon-badge-blue {
+  background: color-mix(in srgb, var(--blue) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 22%, transparent);
+  color: var(--blue);
+}
+
+/* generic colour-accented badge (icon container) — pass --accent inline */
+.dash-icon-badge-accent {
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 22%, transparent);
+  color: var(--accent);
+}
+
+/* chip / tag */
+.dash-chip {
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border);
+  color: var(--dash-text-muted);
+  transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.dash-chip:hover {
+  border-color: color-mix(in srgb, var(--blue) 40%, transparent);
+  color: var(--dash-text);
+}
+
+/* small count / meta badge */
+.dash-badge {
+  background: var(--dash-surface-2);
+  border: 1px solid var(--dash-border);
+  color: var(--dash-text-dim);
+}
+
+/* blue-accented badge */
+.dash-badge-blue {
+  background: color-mix(in srgb, var(--blue) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 20%, transparent);
+  color: var(--blue);
+}
+
+/* text colours */
+.dash-text-heading { color: var(--dash-text); }
+.dash-text-body    { color: var(--dash-text-muted); }
+.dash-text-dim     { color: var(--dash-text-dim); }
+.dash-text-faint   { color: var(--dash-text-faint); }
+
+/* progress track */
+.dash-progress-track {
+  background: var(--dash-surface-2);
+}
+
+/* difficulty / status chip variants */
+.dash-chip-emerald {
+  background: color-mix(in srgb, #10b981 12%, transparent);
+  border: 1px solid color-mix(in srgb, #10b981 28%, transparent);
+  color: #10b981;
+}
+.dash-chip-amber {
+  background: color-mix(in srgb, #f59e0b 12%, transparent);
+  border: 1px solid color-mix(in srgb, #f59e0b 28%, transparent);
+  color: #f59e0b;
+}
+.dash-chip-orange {
+  background: color-mix(in srgb, #f97316 12%, transparent);
+  border: 1px solid color-mix(in srgb, #f97316 28%, transparent);
+  color: #f97316;
+}
+.dash-chip-red {
+  background: color-mix(in srgb, #ef4444 12%, transparent);
+  border: 1px solid color-mix(in srgb, #ef4444 28%, transparent);
+  color: #ef4444;
+}
+.dash-chip-blue {
+  background: color-mix(in srgb, var(--blue) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 28%, transparent);
+  color: var(--blue);
+}
+
+/* roadmap step number circle */
+.dash-step-num {
+  background: color-mix(in srgb, var(--blue) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blue) 26%, transparent);
+  color: var(--blue);
+}
+
+/* filter pill group */
+.dash-pill-group {
+  background: var(--dash-surface);
+  border: 1px solid var(--dash-border);
+}
+.dash-pill {
+  color: var(--dash-text-dim);
+  transition: color 0.15s, background 0.15s;
+}
+.dash-pill:hover {
+  color: var(--dash-text-muted);
+}
+.dash-pill-active {
+  background: var(--blue, #3b82f6);
+  color: #fff;
+}
+
+/* tree guide line */
+.dash-tree-line {
+  background: var(--dash-border);
+}
+
+/* tree row hover */
+.dash-tree-row {
+  color: var(--dash-text-dim);
+  transition: color 0.1s, background 0.1s;
+}
+.dash-tree-row:hover {
+  color: var(--dash-text);
+  background: var(--dash-surface-2);
+}
+
+/* highlight match in search */
+.dash-highlight {
+  background: color-mix(in srgb, var(--blue) 14%, transparent);
+  color: var(--blue);
+}

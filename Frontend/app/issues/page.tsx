@@ -35,12 +35,6 @@ export default function IssuesPage() {
     }
   };
 
-  /*
-  |--------------------------------------------------------------------------
-  | Fetch Good First Issues
-  |--------------------------------------------------------------------------
-  */
-
   const fetchGoodFirstIssues = async () => {
     try {
       setLoading(true);
@@ -54,12 +48,6 @@ export default function IssuesPage() {
       setLoading(false);
     }
   };
-
-  /*
-  |--------------------------------------------------------------------------
-  | Search Issues
-  |--------------------------------------------------------------------------
-  */
 
   const handleSearch = async () => {
     if (!search.trim()) return;
@@ -80,22 +68,9 @@ export default function IssuesPage() {
   const handleAnalyzeIssue = async (issue: any) => {
     try {
       setLoadingIssueId(issue.id);
-
-      /*
-      |--------------------------------------------------------------------------
-      | Extract Repo URL
-      |--------------------------------------------------------------------------
-      */
-
       const repoName = issue.repository;
 
       const repoUrl = `https://github.com/${repoName}`;
-
-      /*
-      |--------------------------------------------------------------------------
-      | Extract Issue Number
-      |--------------------------------------------------------------------------
-      */
 
       const issueNumber = issue.url.split("/").pop();
 
@@ -265,14 +240,14 @@ export default function IssuesPage() {
                 >
                   View Issue
                 </a>
-                <button
-                  onClick={() => handleAnalyzeIssue(issue)}
-                  className="w-full mt-5 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl font-semibold"
+                <a
+                  href={`/issues/${issue.repository}/${issue.url
+                    .split("/")
+                    .pop()}`}
+                  className="block w-full mt-6 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-center font-semibold"
                 >
-                  {loadingIssueId === issue.id
-                    ? "Analyzing..."
-                    : "Analyze Issue"}
-                </button>
+                  Analyze Issue
+                </a>
                 {issueAnalyses[issue.id] && (
                   <div className="mt-6 border-t border-zinc-800 pt-6 space-y-5">
                     {/* Problem */}

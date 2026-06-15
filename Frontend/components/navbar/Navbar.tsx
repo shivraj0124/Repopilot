@@ -255,8 +255,7 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-1">
             {[
               { href: "/explore",  label: "Explore",  Icon: HiOutlineCode },
-              { href: "/issues",   label: "Issues",   Icon: HiOutlineLightningBolt },
-              { href: "/docs",     label: "Docs",     Icon: HiOutlineBookOpen },
+              { href: "/issues",   label: "Issues",   Icon: HiOutlineLightningBolt }
             ].map(({ href, label, Icon }) => (
               <Link
                 key={label}

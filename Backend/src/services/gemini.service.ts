@@ -3,19 +3,31 @@ import { GoogleGenAI } from "@google/genai";
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY!,
 });
+console.log("Gemini API Key Loaded:", !!process.env.GEMINI_API_KEY);
+export const generateRepositorySummary =
+  async (
+    readme: string,
+    folderTree: any[]
+  ) => {
 
-export const generateRepositorySummary = async (
-  readme: string,
-  folderTree: any[]
-) => {
-  const prompt = `
-Analyze this repository.
+    const limitedReadme =
+      readme.slice(0, 8000);
+
+    const limitedTree =
+      folderTree
+        .slice(0, 50)
+        .map((item) => item.path);
+
+    const prompt = `
+You are a senior software architect.
+
+Analyze this GitHub repository.
 
 README:
-${readme}
+${limitedReadme}
 
 Folder Structure:
-${JSON.stringify(folderTree.slice(0,100))}
+${limitedTree.join("\n")}
 
 Return ONLY valid JSON.
 
@@ -26,23 +38,39 @@ Return ONLY valid JSON.
   "folderExplanation": "",
   "difficulty": ""
 }
+
+Rules:
+- Return only JSON
+- No markdown
+- No explanation outside JSON
 `;
 
-  const response = await ai.models.generateContent({
-  model: "gemini-flash-latest",
-  contents: prompt,
-});
+    console.log(
+      "Prompt Length:",
+      prompt.length
+    );
 
-const text = response.text ?? "";
+    const response =
+      await ai.models.generateContent({
+        model: "gemini-flash-latest",
+        contents: prompt,
+      });
 
-const cleaned = text
-  .replace(/```json/g, "")
-  .replace(/```/g, "")
-  .trim();
+    const text =
+      response.text ?? "";
 
-return JSON.parse(cleaned);
-};
+    console.log(
+      "Raw AI Response:",
+      text
+    );
 
+    const cleaned = text
+      .replace(/```json/g, "")
+      .replace(/```/g, "")
+      .trim();
+
+    return JSON.parse(cleaned);
+  };
 
 export const analyzeIssue = async (issue: any) => {
   const prompt = `
@@ -86,6 +114,7 @@ Return only a valid JSON object.
   });
 
   const text = response.text ?? "";
+  console.log("Raw AI Response for Issue Analysis:", text);
 
   const cleaned = text
     .replace(/```json/g, "")

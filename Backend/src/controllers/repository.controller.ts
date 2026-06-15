@@ -45,6 +45,7 @@ export const analyzeRepository = async (
         readme,
         tree
       );
+      console.log("aiAnalysis",aiAnalysis);
 
     const repositoryRecord =
       await saveRepository(
