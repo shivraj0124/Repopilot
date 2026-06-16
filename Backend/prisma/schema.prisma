@@ -47,7 +47,7 @@ model Analysis {
   summary           String  @db.Text
   architecture      String? @db.Text
   techStack         String? @db.Text
-  folderExplanation String? @db.Text
+  folderExplanation Json?
 
   createdAt DateTime @default(now())
 

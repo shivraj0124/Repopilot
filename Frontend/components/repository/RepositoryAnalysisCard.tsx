@@ -119,7 +119,18 @@ export default function RepositoryAnalysisCard({ analysis }: RepositoryAnalysisC
         </Section>
 
         <Section icon={FolderOpen} title="Folder Explanation" accent="#14b8a6">
-          <p className="dash-text-body whitespace-pre-line">{analysis.folderExplanation}</p>
+          <div className="space-y-2.5">
+            {Object.entries(analysis.folderExplanation || {}).map(([folder, explanation]) => (
+              <div key={folder} className="dash-folder-row">
+                <p className="dash-folder-path">{folder}</p>
+                <p className="dash-text-body !text-xs mt-1 leading-relaxed">{String(explanation)}</p>
+              </div>
+            ))}
+
+            {Object.keys(analysis.folderExplanation || {}).length === 0 && (
+              <p className="dash-text-body !text-xs">No folder breakdown available.</p>
+            )}
+          </div>
         </Section>
       </div>
     </div>

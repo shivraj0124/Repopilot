@@ -29,7 +29,6 @@ const TABS = [
 ] as const;
 type TabKey = (typeof TABS)[number]["key"];
 
-/* ── Grid background (matches homepage) ── */
 function GridBackground() {
   return (
     <div className="rp-grid-bg" aria-hidden="true">
@@ -39,7 +38,6 @@ function GridBackground() {
   );
 }
 
-/* ── Skeleton loader ── */
 function SkeletonLoader() {
   return (
     <div className="dash-skeleton-card">
@@ -62,7 +60,6 @@ function SkeletonLoader() {
   );
 }
 
-/* ── Stat pill ── */
 function StatPill({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="dash-stat-pill">
@@ -91,6 +88,7 @@ export default function DashboardPage() {
     try {
       setLoading(true);
       const response = await api.post("/repositories/analyze", { repoUrl: url });
+      console.log("Repository Analysis Response:", response.data.aiAnalysis);
       setAnalysis(response.data.aiAnalysis);
       const issuesResponse = await api.post("/issues/list", { repoUrl: url });
       setIssues(issuesResponse.data.issues);
