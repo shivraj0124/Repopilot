@@ -16,11 +16,36 @@ const DIFFICULTY: Record<
   string,
   { chipClass: string; bar: number; label: string; barColor: string }
 > = {
-  beginner:     { chipClass: "dash-chip-emerald", barColor: "#34d399", bar: 25,  label: "Beginner" },
-  easy:         { chipClass: "dash-chip-emerald", barColor: "#34d399", bar: 35,  label: "Easy" },
-  intermediate: { chipClass: "dash-chip-amber",   barColor: "#fbbf24", bar: 60,  label: "Intermediate" },
-  advanced:     { chipClass: "dash-chip-orange",  barColor: "#fb923c", bar: 80,  label: "Advanced" },
-  expert:       { chipClass: "dash-chip-red",     barColor: "#f87171", bar: 100, label: "Expert" },
+  beginner: {
+    chipClass: "dash-chip-emerald",
+    barColor: "#34d399",
+    bar: 25,
+    label: "Beginner",
+  },
+  easy: {
+    chipClass: "dash-chip-emerald",
+    barColor: "#34d399",
+    bar: 35,
+    label: "Easy",
+  },
+  intermediate: {
+    chipClass: "dash-chip-amber",
+    barColor: "#fbbf24",
+    bar: 60,
+    label: "Intermediate",
+  },
+  advanced: {
+    chipClass: "dash-chip-orange",
+    barColor: "#fb923c",
+    bar: 80,
+    label: "Advanced",
+  },
+  expert: {
+    chipClass: "dash-chip-red",
+    barColor: "#f87171",
+    bar: 100,
+    label: "Expert",
+  },
 };
 
 function getDifficulty(raw: string) {
@@ -28,7 +53,14 @@ function getDifficulty(raw: string) {
   const found =
     DIFFICULTY[key] ??
     DIFFICULTY[Object.keys(DIFFICULTY).find((k) => key.includes(k)) ?? ""];
-  return found ?? { chipClass: "dash-chip-blue", barColor: "#3b82f6", bar: 50, label: raw };
+  return (
+    found ?? {
+      chipClass: "dash-chip-blue",
+      barColor: "#3b82f6",
+      bar: 50,
+      label: raw,
+    }
+  );
 }
 
 /* ── Section wrapper ── */
@@ -61,7 +93,9 @@ function Section({
   );
 }
 
-export default function RepositoryAnalysisCard({ analysis }: RepositoryAnalysisCardProps) {
+export default function RepositoryAnalysisCard({
+  analysis,
+}: RepositoryAnalysisCardProps) {
   if (!analysis) return null;
 
   const diff = getDifficulty(analysis.difficulty ?? "");
@@ -70,19 +104,29 @@ export default function RepositoryAnalysisCard({ analysis }: RepositoryAnalysisC
     <div className="mt-4 space-y-3">
       {/* ── Purpose + Difficulty side by side on md+ ── */}
       <div className="grid md:grid-cols-3 gap-3">
-        <Section icon={Target} title="Project Purpose" accent="#3b82f6" className="md:col-span-2">
+        <Section
+          icon={Target}
+          title="Project Purpose"
+          accent="#3b82f6"
+          className="md:col-span-2"
+        >
           <p className="dash-text-body">{analysis.projectPurpose}</p>
         </Section>
 
         <Section icon={Gauge} title="Difficulty Level" accent="#f59e0b">
           <div className="flex flex-col gap-3">
-            <span className={`inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full w-fit ${diff.chipClass}`}>
+            <span
+              className={`inline-flex items-center gap-1.5 text-sm font-semibold px-3 py-1 rounded-full w-fit ${diff.chipClass}`}
+            >
               <CheckCircle2 size={12} />
               {diff.label}
             </span>
 
             <div>
-              <div className="flex justify-between text-[10px] mb-1.5 font-semibold uppercase tracking-wider" style={{ color: "var(--text-faint)" }}>
+              <div
+                className="flex justify-between text-[10px] mb-1.5 font-semibold uppercase tracking-wider"
+                style={{ color: "var(--text-faint)" }}
+              >
                 <span>Beginner</span>
                 <span>Expert</span>
               </div>
@@ -115,20 +159,31 @@ export default function RepositoryAnalysisCard({ analysis }: RepositoryAnalysisC
       {/* ── Architecture + Folder Explanation side by side on lg+ ── */}
       <div className="grid lg:grid-cols-2 gap-3">
         <Section icon={NetworkIcon} title="Architecture" accent="#06b6d4">
-          <p className="dash-text-body">{analysis.architecture}</p>
+          {/* <p className="dash-text-body">{analysis.architecture}</p> */}
+          <p className=" dash-folder-path">{analysis.architecture?.pattern}</p>
+
+          <p className="dash-text-body">
+            {analysis.architecture?.explanation}
+          </p>
         </Section>
 
         <Section icon={FolderOpen} title="Folder Explanation" accent="#14b8a6">
           <div className="space-y-2.5">
-            {Object.entries(analysis.folderExplanation || {}).map(([folder, explanation]) => (
-              <div key={folder} className="dash-folder-row">
-                <p className="dash-folder-path">{folder}</p>
-                <p className="dash-text-body !text-xs mt-1 leading-relaxed">{String(explanation)}</p>
-              </div>
-            ))}
+            {Object.entries(analysis.folderExplanation || {}).map(
+              ([folder, explanation]) => (
+                <div key={folder} className="dash-folder-row">
+                  <p className="dash-folder-path">{folder}</p>
+                  <p className="dash-text-body !text-xs mt-1 leading-relaxed">
+                    {String(explanation)}
+                  </p>
+                </div>
+              ),
+            )}
 
             {Object.keys(analysis.folderExplanation || {}).length === 0 && (
-              <p className="dash-text-body !text-xs">No folder breakdown available.</p>
+              <p className="dash-text-body !text-xs">
+                No folder breakdown available.
+              </p>
             )}
           </div>
         </Section>

@@ -143,36 +143,106 @@ export const generateRepositorySummary = async (
   const limitedReadme = readme.slice(0, 8000);
 
   const limitedTree = folderTree
-    .slice(0, 50)
-    .map((item) => item.path);
+  .filter(
+    (item) =>
+      item.type === "tree" &&
+      !item.path.startsWith(".")
+  )
+  .slice(0, 100)
+  .map((item) => item.path);
 
-  const prompt = `
-You are a senior software architect.
+const prompt = `
+You are a senior software architect, open-source maintainer, and technical reviewer.
 
-Analyze this GitHub repository.
+Analyze the following GitHub repository.
 
 README:
 ${limitedReadme}
 
-Folder Structure:
+Repository Folder Structure:
 ${limitedTree.join("\n")}
+
+Your Tasks:
+
+1. Identify the primary purpose of the project.
+2. Detect the technology stack used.
+3. Identify the architecture pattern used.
+4. Explain WHY the project follows that architecture.
+5. Identify ONLY the most important folders/directories that help developers understand the codebase.
+6. Explain the responsibility of each important folder.
+7. Estimate the onboarding difficulty for a new contributor.
+
+Folder Selection Rules:
+
+- Use ONLY folders/directories that actually exist in the provided folder structure.
+- Do NOT invent folder names.
+- Ignore hidden/configuration folders unless they are architecturally important:
+  - .github
+  - .idea
+  - .vscode
+  - .git
+  - .husky
+  - node_modules
+  - dist
+  - build
+  - coverage
+- Prefer folders containing:
+  - source code
+  - backend services
+  - frontend code
+  - APIs
+  - business logic
+  - infrastructure
+  - deployments
+  - operators
+  - SDKs
+  - integrations
+  - CLI tools
+- Maximum 8 folders.
+- Keys must exactly match folder paths from the repository.
+
+Architecture Rules:
+
+- Choose the most appropriate architecture pattern.
+- Examples:
+  - MVC
+  - MVVM
+  - Layered Architecture
+  - Clean Architecture
+  - Component-Based Architecture
+  - Monolithic
+  - Microservices
+  - Event-Driven Architecture
+- Provide a detailed explanation (2-4 sentences) based on repository structure and README.
+- Do not give only the architecture name.
+
+Difficulty Rules:
+
+Must be one of:
+- Beginner
+- Intermediate
+- Advanced
 
 Return ONLY valid JSON.
 
 {
   "projectPurpose": "",
   "techStack": [],
-  "architecture": "",
-  "folderExplanation": "",
+  "architecture": {
+    "pattern": "",
+    "explanation": ""
+  },
+  "folderExplanation": {
+    "folder/path": "responsibility"
+  },
   "difficulty": ""
 }
 
-Rules:
-- Return only JSON
-- No markdown
-- No explanation outside JSON
+Do NOT return markdown.
+Do NOT wrap the response in \`\`\`.
+Do NOT add any extra text.
+Return ONLY a valid JSON object.
 `;
-
   console.log("Prompt Length:", prompt.length);
 
   const response =

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect,useState } from "react";
 import {
   CircleDot,
   MessageSquare,
@@ -79,10 +79,14 @@ function IssueCard({
   const isLoading = loadingIssueId === issue.number;
   const hasAnalysis = !!analysis;
 
-  if (hasAnalysis && !expanded) setExpanded(true);
+  // if (hasAnalysis && !expanded) setExpanded(true);
 
   const diff = analysis ? diffStyle(analysis.difficulty ?? "") : null;
-
+  useEffect(() => {
+  if (hasAnalysis) {
+    setExpanded(true);
+  }
+}, [hasAnalysis]);
   return (
     <div className={`rounded-xl overflow-hidden transition-all duration-200 ${hasAnalysis ? "dash-card-active" : "dash-card"}`}>
       {/* ── Issue header ── */}

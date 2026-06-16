@@ -35,7 +35,7 @@ export const saveAnalysis = async (
     data: {
       repositoryId,
       summary: analysis.projectPurpose,
-      architecture: analysis.architecture,
+      architecture: analysis.architecture.pattern,
       techStack: analysis.techStack.join(", "),
       folderExplanation: analysis.folderExplanation,
     },
