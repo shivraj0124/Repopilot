@@ -7,26 +7,130 @@ import Footer from "@/components/Footer";
 
 import api from "@/lib/axios";
 
-import { MessageSquare, ExternalLink, Search } from "lucide-react";
+import {
+  MessageSquare,
+  ExternalLink,
+  Search,
+  Flame,
+  Sparkles,
+  Loader2,
+  AlertCircle,
+  GitMerge,
+  Gauge,
+  Clock,
+  FileCode,
+  Map,
+  CircleDot,
+} from "lucide-react";
+import "@/styles/dashboard.css";
+import "@/styles/explore.css";
+import { useAuth } from "@/context/AuthContext";
+
+function GridBackground() {
+  return (
+    <div className="rp-grid-bg" aria-hidden="true">
+      <div className="rp-grid-lines" />
+      <div className="rp-radial-fade" />
+    </div>
+  );
+}
+
+/* ── Skeleton card ── */
+function SkeletonCard() {
+  return (
+    <div className="explore-card">
+      <div className="explore-skel h-6 w-full mb-4" />
+      <div className="explore-skel h-4 w-1/2 mb-6" />
+      <div className="flex gap-2">
+        <div className="explore-skel h-6 w-16 rounded-full" />
+        <div className="explore-skel h-6 w-20 rounded-full" />
+      </div>
+      <div className="explore-skel h-11 w-full mt-6 rounded-xl" />
+    </div>
+  );
+}
+
+/* ── Empty state ── */
+function EmptyState() {
+  return (
+    <div className="dash-empty">
+      <div className="dash-empty-icon">
+        <Search size={24} />
+      </div>
+      <p className="dash-empty-title">No issues found</p>
+      <p className="dash-empty-sub">Try a different search term or switch tabs</p>
+    </div>
+  );
+}
+
+/* ── difficulty colour helper ── */
+function diffStyle(raw: string) {
+  const d = raw?.toLowerCase() ?? "";
+  if (d.includes("beginner") || d.includes("easy")) return { chip: "dash-chip-emerald" };
+  if (d.includes("intermediate")) return { chip: "dash-chip-amber" };
+  if (d.includes("advanced")) return { chip: "dash-chip-orange" };
+  if (d.includes("expert")) return { chip: "dash-chip-red" };
+  return { chip: "dash-chip-blue" };
+}
+
+/* ── Analyze button with login-gated tooltip ── */
+function AnalyzeButton({
+  isLoggedIn,
+  isLoading,
+  onClick,
+}: {
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  onClick: () => void;
+}) {
+  if (!isLoggedIn) {
+    return (
+      <div className="relative group flex-1">
+        <button disabled className="explore-btn-primary opacity-60 cursor-not-allowed">
+          <Sparkles size={14} />
+          Analyze
+        </button>
+        <div className="explore-tooltip absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+          Login first to analyze issues
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={onClick}
+      disabled={isLoading}
+      className="explore-btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      {isLoading ? (
+        <>
+          <Loader2 size={14} className="animate-spin" />
+          Analyzing…
+        </>
+      ) : (
+        <>
+          <Sparkles size={14} />
+          Analyze
+        </>
+      )}
+    </button>
+  );
+}
 
 export default function IssuesPage() {
   const [issues, setIssues] = useState<any[]>([]);
-
   const [loading, setLoading] = useState(true);
-
   const [search, setSearch] = useState("");
-
   const [activeTab, setActiveTab] = useState("trending");
   const [issueAnalyses, setIssueAnalyses] = useState<Record<number, any>>({});
-
   const [loadingIssueId, setLoadingIssueId] = useState<number | null>(null);
+  const { isLoggedIn } = useAuth();
 
   const fetchTrendingIssues = async () => {
     try {
       setLoading(true);
-
       const response = await api.get("/issues/trending");
-
       setIssues(response.data.issues);
     } catch (error) {
       console.error(error);
@@ -38,9 +142,7 @@ export default function IssuesPage() {
   const fetchGoodFirstIssues = async () => {
     try {
       setLoading(true);
-
       const response = await api.get("/issues/good-first");
-
       setIssues(response.data.issues);
     } catch (error) {
       console.error(error);
@@ -51,12 +153,9 @@ export default function IssuesPage() {
 
   const handleSearch = async () => {
     if (!search.trim()) return;
-
     try {
       setLoading(true);
-
       const response = await api.get(`/issues/search?q=${search}`);
-
       setIssues(response.data.issues);
     } catch (error) {
       console.error(error);
@@ -69,20 +168,11 @@ export default function IssuesPage() {
     try {
       setLoadingIssueId(issue.id);
       const repoName = issue.repository;
-
       const repoUrl = `https://github.com/${repoName}`;
-
       const issueNumber = issue.url.split("/").pop();
 
-      const response = await api.post("/issues/analyze", {
-        repoUrl,
-        issueNumber,
-      });
-
-      setIssueAnalyses((prev) => ({
-        ...prev,
-        [issue.id]: response.data.analysis,
-      }));
+      const response = await api.post("/issues/analyze", { repoUrl, issueNumber });
+      setIssueAnalyses((prev) => ({ ...prev, [issue.id]: response.data.analysis }));
     } catch (error) {
       console.error(error);
     } finally {
@@ -95,242 +185,221 @@ export default function IssuesPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-zinc-950 text-white">
+    <div className="rp-page">
       <Navbar />
 
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Heading */}
-        <div className="mb-10">
-          <h1 className="text-5xl font-bold">Explore Issues</h1>
+      <section className="relative">
+        <GridBackground />
 
-          <p className="text-zinc-400 mt-4 text-lg">
-            Discover trending and beginner-friendly GitHub issues powered by AI.
-          </p>
-        </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 z-10">
 
-        {/* Search */}
-        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 flex gap-3 mb-8">
-          <div className="flex items-center gap-2 flex-1 bg-zinc-950 border border-zinc-800 rounded-xl px-4">
-            <Search size={18} className="text-zinc-500" />
-
-            <input
-              type="text"
-              placeholder="Search issues..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-transparent py-3 outline-none"
-            />
+          {/* ── Heading ── */}
+          <div className="mb-8">
+            <div className="dash-eyebrow mb-4">
+              <Flame size={11} />
+              Trending Right Now
+            </div>
+            <h1 className="explore-hero-h1">Explore Issues</h1>
+            <p className="explore-hero-sub">
+              Discover trending and beginner-friendly GitHub issues powered by AI.
+            </p>
           </div>
 
-          <button
-            onClick={handleSearch}
-            className="bg-blue-600 hover:bg-blue-700 px-6 rounded-xl font-semibold"
-          >
-            Search
-          </button>
-        </div>
-
-        {/* Tabs */}
-        <div className="flex gap-4 mb-8">
-          <button
-            onClick={() => {
-              setActiveTab("trending");
-
-              fetchTrendingIssues();
-            }}
-            className={`px-4 py-2 rounded-lg transition ${
-              activeTab === "trending"
-                ? "bg-blue-600"
-                : "bg-zinc-900 text-zinc-400"
-            }`}
-          >
-            Trending
-          </button>
-
-          <button
-            onClick={() => {
-              setActiveTab("good-first");
-
-              fetchGoodFirstIssues();
-            }}
-            className={`px-4 py-2 rounded-lg transition ${
-              activeTab === "good-first"
-                ? "bg-blue-600"
-                : "bg-zinc-900 text-zinc-400"
-            }`}
-          >
-            Good First Issues
-          </button>
-        </div>
-
-        {/* Loading */}
-        {loading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.from({
-              length: 6,
-            }).map((_, index) => (
-              <div
-                key={index}
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 animate-pulse"
-              >
-                <div className="h-6 bg-zinc-800 rounded mb-4"></div>
-
-                <div className="h-4 bg-zinc-800 rounded w-1/2 mb-6"></div>
-
-                <div className="flex gap-2">
-                  <div className="h-6 w-16 bg-zinc-800 rounded-full"></div>
-
-                  <div className="h-6 w-20 bg-zinc-800 rounded-full"></div>
-                </div>
-              </div>
-            ))}
+          {/* ── Search ── */}
+          <div className="explore-search-card flex flex-col sm:flex-row gap-3 mb-6">
+            <div className="explore-search-wrap">
+              <Search size={15} className="explore-search-icon" />
+              <input
+                type="text"
+                placeholder="Search issues…"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                className="explore-search-input"
+              />
+            </div>
+            <button onClick={handleSearch} className="explore-search-btn">
+              Search
+            </button>
           </div>
-        )}
 
-        {/* Issues */}
-        {!loading && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {issues.map((issue) => (
-              <div
-                key={issue.id}
-                className="bg-zinc-900 border border-zinc-800 rounded-2xl p-6 hover:border-blue-500 transition"
-              >
-                {/* Title */}
-                <div className="flex items-start justify-between gap-3">
-                  <h2 className="text-lg font-semibold leading-relaxed">
-                    {issue.title}
-                  </h2>
+          {/* ── Tabs ── */}
+          <div className="flex gap-3 mb-8">
+            <button
+              onClick={() => { setActiveTab("trending"); fetchTrendingIssues(); }}
+              className={`explore-tab ${activeTab === "trending" ? "explore-tab-active" : ""}`}
+            >
+              Trending
+            </button>
+            <button
+              onClick={() => { setActiveTab("good-first"); fetchGoodFirstIssues(); }}
+              className={`explore-tab ${activeTab === "good-first" ? "explore-tab-active" : ""}`}
+            >
+              Good First Issues
+            </button>
+          </div>
 
-                  <a href={issue.url} target="_blank">
-                    <ExternalLink
-                      size={18}
-                      className="text-zinc-400 hover:text-white"
-                    />
-                  </a>
-                </div>
+          {/* ── Loading ── */}
+          {loading && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, index) => (
+                <SkeletonCard key={index} />
+              ))}
+            </div>
+          )}
 
-                {/* Repository */}
-                <p className="text-zinc-400 mt-4">{issue.repository}</p>
+          {/* ── Issues ── */}
+          {!loading && issues.length > 0 && (
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {issues.map((issue) => {
+                const analysis = issueAnalyses[issue.id];
+                const isLoading = loadingIssueId === issue.id;
+                const diff = analysis ? diffStyle(analysis.difficulty ?? "") : null;
 
-                {/* Comments */}
-                <div className="flex items-center gap-2 mt-4 text-sm text-zinc-400">
-                  <MessageSquare size={16} />
-                  {issue.comments} comments
-                </div>
-
-                {/* Labels */}
-                <div className="flex flex-wrap gap-2 mt-5">
-                  {issue.labels
-                    ?.slice(0, 3)
-                    .map((label: string, index: number) => (
-                      <span
-                        key={index}
-                        className="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs"
+                return (
+                  <div
+                    key={issue.id}
+                    className={`explore-card flex flex-col ${analysis ? "md:col-span-2 lg:col-span-2" : ""}`}
+                  >
+                    {/* Title */}
+                    <div className="flex items-start justify-between gap-3">
+                      <h2 className="explore-card-title !text-base leading-snug">{issue.title}</h2>
+                      <a
+                        href={issue.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="explore-icon-link flex-shrink-0 mt-0.5"
+                        title="View on GitHub"
                       >
-                        {label}
-                      </span>
-                    ))}
-                </div>
-
-                {/* Button */}
-                <a
-                  href={issue.url}
-                  target="_blank"
-                  className="block w-full mt-6 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-center font-semibold"
-                >
-                  View Issue
-                </a>
-                <a
-                  href={`/issues/${issue.repository}/${issue.url
-                    .split("/")
-                    .pop()}`}
-                  className="block w-full mt-6 bg-blue-600 hover:bg-blue-700 py-3 rounded-xl text-center font-semibold"
-                >
-                  Analyze Issue
-                </a>
-                {issueAnalyses[issue.id] && (
-                  <div className="mt-6 border-t border-zinc-800 pt-6 space-y-5">
-                    {/* Problem */}
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">Problem</h3>
-
-                      <p className="text-zinc-300">
-                        {issueAnalyses[issue.id].problem}
-                      </p>
+                        <ExternalLink size={16} />
+                      </a>
                     </div>
 
-                    {/* Root Cause */}
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">Root Cause</h3>
+                    {/* Repository */}
+                    <p className="explore-card-repo mt-3 flex items-center gap-1.5">
+                      <CircleDot size={12} />
+                      {issue.repository}
+                    </p>
 
-                      <p className="text-zinc-300">
-                        {issueAnalyses[issue.id].rootCause}
-                      </p>
+                    {/* Comments */}
+                    <div className="explore-meta flex items-center gap-1.5 mt-3">
+                      <MessageSquare size={13} />
+                      {issue.comments} {issue.comments === 1 ? "comment" : "comments"}
                     </div>
 
-                    {/* Difficulty + Time */}
-                    <div className="flex gap-4 flex-wrap">
-                      <div>
-                        <h3 className="font-semibold mb-2">Difficulty</h3>
-
-                        <span className="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-full text-sm">
-                          {issueAnalyses[issue.id].difficulty}
-                        </span>
+                    {/* Labels */}
+                    {issue.labels?.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-4">
+                        {issue.labels.slice(0, 3).map((label: string, index: number) => (
+                          <span key={index} className="explore-label-chip">{label}</span>
+                        ))}
                       </div>
+                    )}
 
-                      <div>
-                        <h3 className="font-semibold mb-2">Estimated Time</h3>
-
-                        <span className="bg-green-600/20 text-green-400 px-3 py-1 rounded-full text-sm">
-                          {issueAnalyses[issue.id].estimatedTime}
-                        </span>
-                      </div>
+                    {/* Buttons */}
+                    <div className="flex gap-2 mt-6">
+                      <a
+                        href={issue.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="explore-btn-outline flex-1"
+                      >
+                        View Issue
+                      </a>
+                      <AnalyzeButton
+                        isLoggedIn={isLoggedIn}
+                        isLoading={isLoading}
+                        onClick={() => handleAnalyzeIssue(issue)}
+                      />
                     </div>
 
-                    {/* Relevant Files */}
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">
-                        Relevant Files
-                      </h3>
+                    {/* ── Analysis panel ── */}
+                    {analysis && (
+                      <div className="explore-analysis-panel space-y-5">
+                        <div className="grid sm:grid-cols-2 gap-4">
+                          <div>
+                            <p className="explore-section-label flex items-center gap-1.5">
+                              <AlertCircle size={11} />
+                              Problem
+                            </p>
+                            <p className="dash-text-body !text-xs leading-relaxed">{analysis.problem}</p>
+                          </div>
+                          <div>
+                            <p className="explore-section-label flex items-center gap-1.5">
+                              <GitMerge size={11} />
+                              Root Cause
+                            </p>
+                            <p className="dash-text-body !text-xs leading-relaxed">{analysis.rootCause}</p>
+                          </div>
+                        </div>
 
-                      <div className="flex flex-wrap gap-2">
-                        {issueAnalyses[issue.id].relevantFiles?.map(
-                          (file: string, index: number) => (
-                            <span
-                              key={index}
-                              className="bg-zinc-800 px-3 py-1 rounded-lg text-sm"
-                            >
-                              {file}
+                        <div className="flex flex-wrap gap-4">
+                          <div>
+                            <p className="explore-section-label flex items-center gap-1.5">
+                              <Gauge size={11} />
+                              Difficulty
+                            </p>
+                            <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full ${diff!.chip}`}>
+                              {analysis.difficulty}
                             </span>
-                          ),
+                          </div>
+                          {analysis.estimatedTime && (
+                            <div>
+                              <p className="explore-section-label flex items-center gap-1.5">
+                                <Clock size={11} />
+                                Estimated Time
+                              </p>
+                              <span className="dash-chip-emerald inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-full">
+                                <Clock size={11} />
+                                {analysis.estimatedTime}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+
+                        {analysis.relevantFiles?.length > 0 && (
+                          <div>
+                            <p className="explore-section-label flex items-center gap-1.5">
+                              <FileCode size={11} />
+                              Relevant Files
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {analysis.relevantFiles.map((file: string, index: number) => (
+                                <span key={index} className="explore-file-chip">{file}</span>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {analysis.roadmap?.length > 0 && (
+                          <div>
+                            <p className="explore-section-label flex items-center gap-1.5">
+                              <Map size={11} />
+                              Contribution Roadmap
+                            </p>
+                            <ol className="space-y-2 mt-1">
+                              {analysis.roadmap.map((step: string, index: number) => (
+                                <li key={index} className="flex items-start gap-3">
+                                  <span className="dash-step-num mt-0.5">{index + 1}</span>
+                                  <span className="dash-text-body !text-xs leading-relaxed pt-0.5">{step}</span>
+                                </li>
+                              ))}
+                            </ol>
+                          </div>
                         )}
                       </div>
-                    </div>
-
-                    {/* Roadmap */}
-                    <div>
-                      <h3 className="font-semibold text-lg mb-2">
-                        Contribution Roadmap
-                      </h3>
-
-                      <ol className="list-decimal list-inside space-y-2 text-zinc-300">
-                        {issueAnalyses[issue.id].roadmap?.map(
-                          (step: string, index: number) => (
-                            <li key={index}>{step}</li>
-                          ),
-                        )}
-                      </ol>
-                    </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
+                );
+              })}
+            </div>
+          )}
+
+          {!loading && issues.length === 0 && <EmptyState />}
+        </div>
+      </section>
 
       <Footer />
     </div>
   );
 }
-

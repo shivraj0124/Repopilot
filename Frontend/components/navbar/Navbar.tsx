@@ -254,7 +254,7 @@ export default function Navbar() {
 
           <div className="hidden md:flex items-center gap-1">
             {[
-              { href: "/explore",  label: "Explore",  Icon: HiOutlineCode },
+              { href: "/explore",  label: "Repositories",  Icon: HiOutlineCode },
               { href: "/issues",   label: "Issues",   Icon: HiOutlineLightningBolt }
             ].map(({ href, label, Icon }) => (
               <Link
@@ -352,7 +352,7 @@ export default function Navbar() {
                   href="/login"
                   className="rp-nav-link hidden sm:block text-[0.8125rem] font-medium px-3 py-1.5 rounded-lg hover:bg-[var(--drop-hbg)] transition-colors"
                 >
-                  Sign in
+                  Login
                 </Link>
                 <Link href="/register" className="rp-cta">
                   Get Started

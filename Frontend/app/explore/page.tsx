@@ -8,8 +8,10 @@ import Footer from "@/components/Footer";
 import api from "@/lib/axios";
 
 import { Star, GitFork, ExternalLink, Sparkles, Compass } from "lucide-react";
-import "@/styles/dashboard.css"
-/* ── Grid background (matches homepage / dashboard) ── */
+import "@/styles/dashboard.css";
+import "@/styles/explore.css";
+import { useAuth } from "@/context/AuthContext";
+
 function GridBackground() {
   return (
     <div className="rp-grid-bg" aria-hidden="true">
@@ -50,9 +52,34 @@ function EmptyState() {
   );
 }
 
+/* ── Analyze button with login-gated tooltip ── */
+function AnalyzeButton({ repoUrl, isLoggedIn }: { repoUrl: string; isLoggedIn: boolean }) {
+  if (isLoggedIn) {
+    return (
+      <a href={`/dashboard?repo=${encodeURIComponent(repoUrl)}`} className="explore-btn-primary mt-6">
+        <Sparkles size={14} />
+        Analyze Repository
+      </a>
+    );
+  }
+
+  return (
+    <div className="relative group mt-6">
+      <button disabled className="explore-btn-primary opacity-60 cursor-not-allowed">
+        <Sparkles size={14} />
+        Analyze Repository
+      </button>
+      <div className="explore-tooltip absolute left-1/2 -translate-x-1/2 bottom-full mb-2 px-3 py-2 text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+        Login first to analyze repository
+      </div>
+    </div>
+  );
+}
+
 export default function ExplorePage() {
   const [repositories, setRepositories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { isLoggedIn } = useAuth();
 
   const fetchRepositories = async () => {
     try {
@@ -78,7 +105,6 @@ export default function ExplorePage() {
         <GridBackground />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 z-10">
-
           {/* ── Heading ── */}
           <div className="mb-10">
             <div className="dash-eyebrow mb-4">
@@ -137,13 +163,7 @@ export default function ExplorePage() {
                     )}
                   </div>
 
-                  <a
-                    href={`/dashboard?repo=${encodeURIComponent(repo.url)}`}
-                    className="explore-btn-primary mt-6"
-                  >
-                    <Sparkles size={14} />
-                    Analyze Repository
-                  </a>
+                  <AnalyzeButton repoUrl={repo.url} isLoggedIn={isLoggedIn} />
                 </div>
               ))}
             </div>

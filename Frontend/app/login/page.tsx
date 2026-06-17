@@ -14,7 +14,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import "../auth.css"; // ← adjust path to wherever you put auth.css
-
+import {useAuth} from "@/context/AuthContext";
 export default function LoginPage() {
   const router = useRouter();
 
@@ -22,6 +22,7 @@ export default function LoginPage() {
   const [loading, setLoading]   = useState(false);
   const [showPwd, setShowPwd]   = useState(false);
   const [error, setError]       = useState("");
+  const { setIsLoggedIn } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
@@ -35,6 +36,7 @@ export default function LoginPage() {
       setLoading(true);
       const res = await api.post("/auth/login", formData);
       document.cookie = `token=${res.data.token}; path=/`;
+      setIsLoggedIn(true);
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please try again.");
