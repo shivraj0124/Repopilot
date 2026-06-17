@@ -1,9 +1,5 @@
 import { Request, Response } from "express";
-import {
-  register,
-  login,
-  getCurrentUserService
-} from "../services/auth.service";
+import {register,login,getCurrentUserService} from "../services/auth.service";
 
 export const registerUser = async (req: Request, res: Response) => {
   try {
@@ -37,7 +33,6 @@ export const loginUser = async (req: Request, res: Response) => {
     });
   }
 };
-
 
 export const getCurrentUser = async (
   req: any,

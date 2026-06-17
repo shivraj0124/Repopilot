@@ -14,6 +14,7 @@ import issueRoutes from "./routes/issue.routes";
 import exploreRoutes from "./routes/explore.routes";
 import profileRoutes from "./routes/profile.routes";
 
+
 app.use("/api/auth", authRoutes);
 app.use("/api/repositories",repositoryRoutes);
 app.use("/api/issues", issueRoutes);
@@ -22,10 +23,8 @@ app.use("/api/profile", profileRoutes);
 
 
 app.use("/api", testRoutes);
-app.use(
-  "/api-docs",
-  swaggerUi.serve,
-  swaggerUi.setup(swaggerSpec)
-);
+app.use("/api-docs",swaggerUi.serve,swaggerUi.setup(swaggerSpec));
+
+
 
 export default app;
