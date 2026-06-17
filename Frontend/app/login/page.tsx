@@ -22,8 +22,8 @@ export default function LoginPage() {
   const [loading, setLoading]   = useState(false);
   const [showPwd, setShowPwd]   = useState(false);
   const [error, setError]       = useState("");
-  const { setIsLoggedIn } = useAuth();
-
+  const { setIsLoggedIn,refreshUser } = useAuth();
+ 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,7 +36,7 @@ export default function LoginPage() {
       setLoading(true);
       const res = await api.post("/auth/login", formData);
       document.cookie = `token=${res.data.token}; path=/`;
-      setIsLoggedIn(true);
+      await refreshUser();
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.response?.data?.message || "Login failed. Please try again.");

@@ -7,9 +7,26 @@ import {
   useState,
 } from "react";
 
+import api from "@/lib/axios";
+
+type User = {
+  id: number;
+  name: string;
+  email: string;
+  createdAt: string;
+};
+
 type AuthContextType = {
   isLoggedIn: boolean;
-  setIsLoggedIn: (value: boolean) => void;
+  isLoading: boolean;
+  user: User | null;
+  setUser: React.Dispatch<
+    React.SetStateAction<User | null>
+  >;
+  setIsLoggedIn: React.Dispatch<
+    React.SetStateAction<boolean>
+  >;
+  refreshUser: () => Promise<void>;
 };
 
 const AuthContext =
@@ -23,21 +40,43 @@ export function AuthProvider({
   const [isLoggedIn, setIsLoggedIn] =
     useState(false);
 
-  useEffect(() => {
-    const token = document.cookie
-      .split("; ")
-      .find((row) =>
-        row.startsWith("token=")
-      );
+  const [isLoading, setIsLoading] =
+    useState(true);
 
-    setIsLoggedIn(!!token);
+  const [user, setUser] =
+    useState<User | null>(null);
+
+  const refreshUser = async () => {
+    try {
+      setIsLoading(true);
+
+      const response =
+        await api.get("/auth/me");
+
+      setUser(response.data.user);
+      console.log("User refreshed:", response.data.user);
+      setIsLoggedIn(true);
+    } catch (error) {
+      setUser(null);
+      setIsLoggedIn(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    refreshUser();
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
         isLoggedIn,
+        isLoading,
+        user,
+        setUser,
         setIsLoggedIn,
+        refreshUser,
       }}
     >
       {children}

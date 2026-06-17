@@ -13,6 +13,7 @@ import {
   HiOutlineBookOpen,
   HiOutlineLightningBolt,
 } from "react-icons/hi";
+import {useAuth} from "@/context/AuthContext";
 
 function getCookie(name: string) {
   if (typeof document === "undefined") return null;
@@ -33,24 +34,19 @@ function parseJwt(token: string) {
   }
 }
 
-export default function Navbar() {
-  const [user, setUser] = useState(null);       
+export default function Navbar() {     
   const [theme, setTheme] = useState("dark");  
   const [dropOpen, setDropOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-
+  const {
+  user,
+  isLoggedIn,
+  isLoading,
+} = useAuth();
+console.log(user)
   useEffect(() => {
     const token = getCookie("token"); 
-    if (token) {
-      const payload = parseJwt(token);
-      if (payload) {
-        setUser({
-          name: payload.name || payload.username || "Developer" || "",
-          email: payload.email || "",
-          avatar: payload.avatar || null,
-        });
-      }
-    }
+    
   }, []);
 
   useEffect(() => {
@@ -74,7 +70,6 @@ export default function Navbar() {
 
   const handleLogout = () => {
     deleteCookie("token"); 
-    setUser(null);
     setDropOpen(false);
     window.location.href = "/";
   };
@@ -278,7 +273,7 @@ export default function Navbar() {
                 : <HiOutlineSun  className="text-base" />}
             </button>
 
-            {user ? (
+            {isLoggedIn ? (
               /* ── Logged-in: avatar dropdown ── */
               <div className="relative">
                 <button
@@ -287,11 +282,9 @@ export default function Navbar() {
                   aria-expanded={dropOpen}
                 >
                   <div className="rp-avatar">
-                    {user.avatar
-                      ? <img src={user.avatar} alt={user.name} />
-                      : initials}
+                    {initials}
                   </div>
-                  <span className="name hidden sm:block">{user.name}</span>
+                  <span className="name hidden sm:block">{user?.name}</span>
                   <HiOutlineChevronDown className="chevron text-sm" />
                 </button>
 
@@ -307,15 +300,13 @@ export default function Navbar() {
                       <div className="rp-drop-header">
                         <div className="flex items-center gap-2.5">
                           <div className="rp-avatar" style={{ width: 34, height: 34, borderRadius: 9 }}>
-                            {user.avatar
-                              ? <img src={user.avatar} alt={user.name} />
-                              : initials}
+                            {initials}
                           </div>
                           <div>
                             <p className="text-[0.8rem] font-semibold" style={{ color: "var(--logo-text)" }}>
-                              {user.name}
+                              {user?.name}
                             </p>
-                            {user.email && (
+                            {user?.email && (
                               <p className="rp-drop-email">{user.email}</p>
                             )}
                           </div>

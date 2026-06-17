@@ -43,7 +43,7 @@ export const login = async (data: {
       email: data.email,
     },
   });
-
+  console.log("User found:", user);
   if (!user) {
     throw new Error("Invalid credentials");
   }
@@ -63,17 +63,29 @@ export const login = async (data: {
     },
     process.env.JWT_SECRET!,
     {
-      expiresIn: "7d",
+      expiresIn: "1d",
     }
   );
 
   return {
     token,
+    name: user.name,
+    email: user.email,
+    created_at: user.createdAt
   };
 };
 
-export const getCurrentUser = async (userId: number) => {
-  return prisma.user.findUnique({
+
+export const getCurrentUserService = async (
+  userId?: number
+) => {
+  if (!userId) {
+    throw new Error("User ID is required");
+  }
+
+  console.log("User ID:", userId);
+
+  const user = await prisma.user.findUnique({
     where: {
       id: userId,
     },
@@ -81,6 +93,13 @@ export const getCurrentUser = async (userId: number) => {
       id: true,
       name: true,
       email: true,
+      createdAt: true,
     },
   });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  return user;
 };

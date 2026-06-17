@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import {
   register,
   login,
-  getCurrentUser,
+  getCurrentUserService
 } from "../services/auth.service";
 
 export const registerUser = async (req: Request, res: Response) => {
@@ -38,11 +38,28 @@ export const loginUser = async (req: Request, res: Response) => {
   }
 };
 
-export const getMe = async (req: any, res: Response) => {
-  const user = await getCurrentUser(req.user.userId);
 
-  res.json({
-    success: true,
-    user,
-  });
+export const getCurrentUser = async (
+  req: any,
+  res: Response
+) => {
+  try {
+    const user =
+      await getCurrentUserService(
+        req.user.userId
+      );
+      console.log("Current user fetched:", user);
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
+  } catch (error: any) {
+    res.status(401).json({
+      success: false,
+      message:
+        error.message ||
+        "Failed to fetch user",
+    });
+  }
 };
