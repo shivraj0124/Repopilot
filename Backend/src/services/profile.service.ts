@@ -18,7 +18,7 @@ export const getProfileStats = async (
         },
       },
     });
-
+ console.log(issuesAnalyzed)
   return {
     repositoriesAnalyzed,
     issuesAnalyzed,

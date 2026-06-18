@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
 
@@ -59,7 +58,7 @@ export default function ProfilePage() {
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-5 sm:space-y-6 z-10">
           <ProfileHeader name={user.name} email={user.email} />
 
-          <div className="grid md:grid-cols-2 gap-5 sm:gap-6">
+          <div className="grid md:grid-cols-2 gap-8">
             <ProfileInfo email={user.email} createdAt={user.createdAt} />
 
             <ProfileStats

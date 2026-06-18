@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-import "@/styles/dashboard.css"
 
 const LINK_GROUPS = [
   {
@@ -26,7 +25,8 @@ export default function Footer() {
     <footer className="rp-footer">
       <div className="max-w-6xl mx-auto px-6 py-12">
 
-        <div className="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+        {/* Top: brand + link columns, locked into an explicit grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-[1.5fr_1fr_1fr] gap-10">
 
           {/* Brand */}
           <div className="max-w-xs">
@@ -43,23 +43,21 @@ export default function Footer() {
             </p>
           </div>
 
-          {/* Link groups */}
-          <div className="flex gap-12 sm:gap-16">
-            {LINK_GROUPS.map((group) => (
-              <div key={group.title}>
-                <p className="footer-col-title mb-3">{group.title}</p>
-                <ul className="space-y-2.5">
-                  {group.links.map((link) => (
-                    <li key={link.label}>
-                      <Link href={link.href} className="footer-link">
-                        {link.label}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          {/* Each link group is its own grid cell — title and list can never separate */}
+          {LINK_GROUPS.map((group) => (
+            <div key={group.title}>
+              <p className="footer-col-title mb-4">{group.title}</p>
+              <ul className="flex flex-col gap-3">
+                {group.links.map((link) => (
+                  <li key={link.label}>
+                    <Link href={link.href} className="footer-link">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
 
         {/* Bottom row */}
@@ -70,7 +68,7 @@ export default function Footer() {
 
           <div className="flex items-center gap-4">
             <a
-              href="https://github.com"
+              href="https://github.com/shivraj0124/Repopilot"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="GitHub"
@@ -79,7 +77,7 @@ export default function Footer() {
               <FaGithub size={15} />
             </a>
             <a
-              href="https://linkedin.com"
+              href="/"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="LinkedIn"
