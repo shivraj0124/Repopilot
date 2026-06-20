@@ -2,74 +2,88 @@
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
+import { Sparkles, GitBranch, Brain, Compass, Target } from "lucide-react";
+import "@/styles/dashboard.css";
+
+function GridBackground() {
+  return (
+    <div className="rp-grid-bg" aria-hidden="true">
+      <div className="rp-grid-lines" />
+      <div className="rp-radial-fade" />
+    </div>
+  );
+}
+
+const FEATURES = [
+  {
+    icon: GitBranch,
+    title: "Repository Analysis",
+    desc: "Understand project purpose, architecture, tech stack, and folder structure instantly.",
+  },
+  {
+    icon: Brain,
+    title: "Issue Analysis",
+    desc: "AI-generated issue explanations, difficulty estimation, and contribution roadmaps.",
+  },
+  {
+    icon: Compass,
+    title: "Open Source Discovery",
+    desc: "Explore trending repositories and beginner friendly issues.",
+  },
+];
 
 export default function AboutPage() {
   return (
-    <>
+    <div className="rp-page">
       <Navbar />
 
-      <div className="max-w-5xl mx-auto px-4 py-16">
-        <h1 className="text-5xl font-bold mb-6">
-          About RepoPilot
-        </h1>
+      <section className="relative">
+        <GridBackground />
 
-        <p className="text-zinc-400 text-lg leading-relaxed">
-          RepoPilot is an AI-powered platform designed to help
-          developers understand GitHub repositories faster and
-          contribute to open-source projects with confidence.
-        </p>
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 z-10">
 
-        <div className="grid md:grid-cols-3 gap-6 mt-12">
-          <div className="dash-card p-6">
-            <h3 className="text-xl font-semibold mb-3">
-              Repository Analysis
-            </h3>
-
-            <p className="text-zinc-400">
-              Understand project purpose, architecture,
-              tech stack, and folder structure instantly.
-            </p>
+          {/* ── Heading ── */}
+          <div className="dash-eyebrow mb-5">
+            <Sparkles size={11} />
+            About Us
           </div>
-
-          <div className="dash-card p-6">
-            <h3 className="text-xl font-semibold mb-3">
-              Issue Analysis
-            </h3>
-
-            <p className="text-zinc-400">
-              AI-generated issue explanations, difficulty
-              estimation, and contribution roadmaps.
-            </p>
-          </div>
-
-          <div className="dash-card p-6">
-            <h3 className="text-xl font-semibold mb-3">
-              Open Source Discovery
-            </h3>
-
-            <p className="text-zinc-400">
-              Explore trending repositories and beginner
-              friendly issues.
-            </p>
-          </div>
-        </div>
-
-        <div className="dash-card p-8 mt-8">
-          <h2 className="text-2xl font-bold mb-4">
-            Our Mission
-          </h2>
-
-          <p className="text-zinc-400 leading-relaxed">
-            We believe contributing to open source should be
-            easier. RepoPilot bridges the gap between complex
-            repositories and aspiring contributors by using
-            AI to explain codebases and issues in simple,
-            actionable terms.
+          <h1 className="static-page-title">About RepoPilot</h1>
+          <p className="static-page-lead mt-5">
+            RepoPilot is an AI-powered platform designed to help developers understand
+            GitHub repositories faster and contribute to open-source projects with confidence.
           </p>
+
+          {/* ── Feature cards ── */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
+            {FEATURES.map(({ icon: Icon, title, desc }) => (
+              <div key={title} className="dash-card p-6">
+                <div className="dash-icon-badge-blue mb-4">
+                  <Icon size={16} />
+                </div>
+                <h3 className="static-card-title mb-2.5">{title}</h3>
+                <p className="static-text">{desc}</p>
+              </div>
+            ))}
+          </div>
+
+          {/* ── Mission ── */}
+          <div className="dash-card p-6 sm:p-8 mt-6">
+            <div className="flex items-center gap-2.5 mb-4">
+              <div className="dash-icon-badge-blue">
+                <Target size={16} />
+              </div>
+              <h2 className="static-section-title">Our Mission</h2>
+            </div>
+            <p className="static-text">
+              We believe contributing to open source should be easier. RepoPilot bridges
+              the gap between complex repositories and aspiring contributors by using AI
+              to explain codebases and issues in simple, actionable terms.
+            </p>
+          </div>
         </div>
-      </div>
+      </section>
 
       <Footer />
-    </>
+    </div>
   );
 }

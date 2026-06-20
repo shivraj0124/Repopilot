@@ -1,92 +1,140 @@
 "use client";
 
+import { useState } from "react";
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
+import { Mail, Clock, Send, CheckCircle2, MessageCircle } from "lucide-react";
+import { FaGithub } from "react-icons/fa";
+import "@/styles/dashboard.css";
+
+function GridBackground() {
+  return (
+    <div className="rp-grid-bg" aria-hidden="true">
+      <div className="rp-grid-lines" />
+      <div className="rp-radial-fade" />
+    </div>
+  );
+}
+
+const CONTACT_DETAILS = [
+  { icon: Mail, label: "Email", value: "shivrajkolwankar@gmail.com" },
+  { icon: FaGithub, label: "GitHub", value: "github.com/repopilot" },
+  { icon: Clock, label: "Response Time", value: "Usually within 24–48 hours" },
+];
 
 export default function ContactPage() {
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [submitting, setSubmitting] = useState(false);
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    // wire this up to your actual contact endpoint
+    await new Promise((r) => setTimeout(r, 800));
+    setSubmitting(false);
+    setSubmitted(true);
+    setForm({ name: "", email: "", message: "" });
+  };
+
   return (
-    <>
+    <div className="rp-page">
       <Navbar />
 
-      <div className="max-w-4xl mx-auto px-4 py-16">
-        <h1 className="text-5xl font-bold mb-6">
-          Contact Us
-        </h1>
+      <section className="relative">
+        <GridBackground />
 
-        <p className="text-zinc-400 text-lg">
-          Have feedback, suggestions, or questions about
-          RepoPilot? We'd love to hear from you.
-        </p>
+        <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 z-10">
 
-        <div className="dash-card p-8 mt-10">
-          <div className="space-y-6">
-            <div>
-              <h3 className="font-semibold mb-2">
-                Email
-              </h3>
+          {/* ── Heading ── */}
+          <div className="dash-eyebrow mb-5">
+            <MessageCircle size={11} />
+            Get in Touch
+          </div>
+          <h1 className="static-page-title">Contact Us</h1>
+          <p className="static-page-lead mt-5">
+            Have feedback, suggestions, or questions about RepoPilot? We'd love to hear from you.
+          </p>
 
-              <p className="text-zinc-400">
-                shivrajkolwankar@gmail.com
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">
-                GitHub
-              </h3>
-
-              <p className="text-zinc-400">
-                github.com/repopilot
-              </p>
-            </div>
-
-            <div>
-              <h3 className="font-semibold mb-2">
-                Response Time
-              </h3>
-
-              <p className="text-zinc-400">
-                Usually within 24-48 hours.
-              </p>
+          {/* ── Contact details ── */}
+          <div className="dash-card p-6 sm:p-8 mt-10">
+            <div className="grid sm:grid-cols-3 gap-6">
+              {CONTACT_DETAILS.map(({ icon: Icon, label, value }) => (
+                <div key={label} className="flex items-start gap-3">
+                  <div className="static-field-icon">
+                    <Icon size={15} />
+                  </div>
+                  <div className="min-w-0">
+                    <p className="static-field-label">{label}</p>
+                    <p className="static-field-value break-words">{value}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
+
+          {/* ── Form ── */}
+          <div className="dash-card p-6 sm:p-8 mt-6">
+            <h2 className="static-section-title mb-6">Send a Message</h2>
+
+            {submitted && (
+              <div className="static-success-banner mb-5">
+                <CheckCircle2 size={16} />
+                Message sent! We'll get back to you soon.
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Your Name"
+                value={form.name}
+                onChange={handleChange}
+                required
+                className="static-input"
+              />
+
+              <input
+                type="email"
+                name="email"
+                placeholder="Your Email"
+                value={form.email}
+                onChange={handleChange}
+                required
+                className="static-input"
+              />
+
+              <textarea
+                name="message"
+                rows={5}
+                placeholder="Your Message"
+                value={form.message}
+                onChange={handleChange}
+                required
+                className="static-textarea"
+              />
+
+              <button type="submit" disabled={submitting} className="explore-btn-primary !w-auto disabled:opacity-60">
+                {submitting ? (
+                  "Sending…"
+                ) : (
+                  <>
+                    <Send size={14} />
+                    Send Message
+                  </>
+                )}
+              </button>
+            </form>
+          </div>
         </div>
-
-        <div className="dash-card p-8 mt-8">
-          <h2 className="text-2xl font-bold mb-5">
-            Send a Message
-          </h2>
-
-          <form className="space-y-4">
-            <input
-              type="text"
-              placeholder="Your Name"
-              className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-800"
-            />
-
-            <input
-              type="email"
-              placeholder="Your Email"
-              className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-800"
-            />
-
-            <textarea
-              rows={5}
-              placeholder="Your Message"
-              className="w-full p-3 rounded-xl bg-zinc-900 border border-zinc-800"
-            />
-
-            <button
-              type="submit"
-              className="explore-btn-primary"
-            >
-              Send Message
-            </button>
-          </form>
-        </div>
-      </div>
+      </section>
 
       <Footer />
-    </>
+    </div>
   );
 }

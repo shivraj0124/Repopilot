@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { FaGithub, FaLinkedin } from "react-icons/fa";
-
+import "@/styles/dashboard.css";
 const LINK_GROUPS = [
   {
     title: "Product",

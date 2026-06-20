@@ -15,52 +15,104 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
-import "../auth.css";  
+import "../auth.css";
 
 /* ── password strength helper ── */
-function getStrength(pwd: string): { score: number; label: string; color: string } {
+function getStrength(pwd: string): {
+  score: number;
+  label: string;
+  color: string;
+} {
   if (!pwd) return { score: 0, label: "", color: "" };
   let score = 0;
-  if (pwd.length >= 8)              score++;
-  if (/[A-Z]/.test(pwd))           score++;
-  if (/[0-9]/.test(pwd))           score++;
-  if (/[^A-Za-z0-9]/.test(pwd))   score++;
+  if (pwd.length >= 8) score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
 
   const map = [
-    { label: "Weak",   color: "#ef4444" },
-    { label: "Fair",   color: "#f97316" },
-    { label: "Good",   color: "#eab308" },
+    { label: "Weak", color: "#ef4444" },
+    { label: "Fair", color: "#f97316" },
+    { label: "Good", color: "#eab308" },
     { label: "Strong", color: "#22c55e" },
   ];
-  return { score, ...map[score - 1] ?? map[0] };
+  return { score, ...(map[score - 1] ?? map[0]) };
 }
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState({ name: "", email: "", password: "" });
-  const [loading, setLoading]   = useState(false);
-  const [showPwd, setShowPwd]   = useState(false);
-  const [error, setError]       = useState("");
-  const [success, setSuccess]   = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [loading, setLoading] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const strength = useMemo(() => getStrength(formData.password), [formData.password]);
+  const strength = useMemo(
+    () => getStrength(formData.password),
+    [formData.password],
+  );
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+    const { name, value } = e.target;
+
+    if (name === "name") {
+      // Allow only letters and spaces
+      let filteredValue = value.replace(/[^A-Za-z\s]/g, "");
+
+      // Prevent multiple consecutive spaces
+      filteredValue = filteredValue.replace(/\s+/g, " ");
+
+      // Remove leading spaces while typing
+      filteredValue = filteredValue.replace(/^\s+/, "");
+
+      setFormData({
+        ...formData,
+        [name]: filteredValue,
+      });
+      return;
+    }
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    const trimmedName = formData.name.trim();
+
+    if (trimmedName.length < 5) {
+      setError("Name must be at least 5 characters long.");
+      return;
+    }
+
+    if (!/^[A-Za-z]+(?:\s[A-Za-z]+)*$/.test(trimmedName)) {
+      setError("Name can contain only letters and spaces.");
+      return;
+    }
+
     try {
       setLoading(true);
-      await api.post("/auth/register", formData);
+      await api.post("/auth/register", {
+        ...formData,
+        name: trimmedName,
+      });
       setSuccess(true);
       setTimeout(() => router.push("/login"), 1500);
     } catch (err: any) {
-      setError(err.response?.data?.message || "Registration failed. Please try again.");
+      setError(
+        err.response?.data?.message || "Registration failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -76,7 +128,6 @@ export default function RegisterPage() {
 
       {/* Card */}
       <div className="auth-card relative w-full max-w-md rounded-2xl px-8 py-10 z-10">
-
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="auth-logo-ring w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
@@ -133,6 +184,10 @@ export default function RegisterPage() {
                 className="auth-input"
                 required
                 autoComplete="name"
+                minLength={5}
+                maxLength={50}
+                pattern="[A-Za-z\s]+"
+                title="Name should contain only letters and spaces"
               />
             </div>
           </div>
@@ -201,11 +256,19 @@ export default function RegisterPage() {
           </div>
 
           {/* Terms */}
-          <p className="text-xs leading-relaxed" style={{ color: "var(--auth-sub)" }}>
+          <p
+            className="text-xs leading-relaxed"
+            style={{ color: "var(--auth-sub)" }}
+          >
             By creating an account you agree to our{" "}
-            <Link href="/terms" className="auth-link">Terms of Service</Link>{" "}
+            <Link href="/terms" className="auth-link">
+              Terms of Service
+            </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="auth-link">Privacy Policy</Link>.
+            <Link href="/privacy" className="auth-link">
+              Privacy Policy
+            </Link>
+            .
           </p>
 
           {/* Submit */}
@@ -236,7 +299,10 @@ export default function RegisterPage() {
           </Link>
         </p>
 
-        <p className="text-center mt-6 text-xs" style={{ color: "var(--auth-sub)", opacity: 0.5 }}>
+        <p
+          className="text-center mt-6 text-xs"
+          style={{ color: "var(--auth-sub)", opacity: 0.5 }}
+        >
           Secured by RepoPilot · AI-powered open source tools
         </p>
       </div>
