@@ -183,7 +183,12 @@ export default function RegisterPage() {
         </div>
 
         {/* GitHub OAuth */}
-        <button className="auth-oauth-btn mb-5">
+        <button
+          className="auth-oauth-btn mb-5"
+          onClick={() => {
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github`;
+          }}
+        >
           <FaGithub size={17} />
           Continue with GitHub
         </button>

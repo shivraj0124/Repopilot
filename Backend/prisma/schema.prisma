@@ -13,15 +13,21 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  createdAt DateTime @default(now())
+  id             Int      @id @default(autoincrement())
+
+  name           String
+  email          String?  @unique
+
+  password       String?
+
+  githubId       String?  @unique
+  githubUsername String?
+  avatarUrl      String?
+
+  createdAt      DateTime @default(now())
 
   repositories Repository[]
 }
-
 model Repository {
   id     Int @id @default(autoincrement())
   userId Int
