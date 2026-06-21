@@ -63,45 +63,54 @@ export const getCurrentUser = async (
   }
 };
 
-export const sendOtpController =
-  async (
-    req: Request,
-    res: Response
-  ) => {
-    try {
-      const { email } = req.body;
-      console.log("Sending OTP to email:", email);
-      const otp =
-        generateOtp();
+export const sendOtpController = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { email } = req.body;
 
-      await prisma.otp.create({
-        data: {
+    // Check existing user
+    const existingUser =
+      await prisma.user.findUnique({
+        where: {
           email,
-          otp,
-          expiresAt: new Date(
-            Date.now() +
-              10 * 60 * 1000
-          ),
         },
       });
 
-      await sendOtpEmail(
-        email,
-        otp
-      );
-
-      res.status(200).json({
-        success: true,
-        message:
-          "OTP sent successfully",
-      });
-    } catch (error: any) {
-      res.status(500).json({
+    if (existingUser) {
+      return res.status(400).json({
         success: false,
-        message: error.message,
+        message:
+          "Email already exists. Please login instead.",
       });
     }
-  };
+
+    const otp = generateOtp();
+
+    await prisma.otp.create({
+      data: {
+        email,
+        otp,
+        expiresAt: new Date(
+          Date.now() + 10 * 60 * 1000
+        ),
+      },
+    });
+
+    await sendOtpEmail(email, otp);
+
+    res.status(200).json({
+      success: true,
+      message: "OTP sent successfully",
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
 
 export const verifyOtpController =
   async (

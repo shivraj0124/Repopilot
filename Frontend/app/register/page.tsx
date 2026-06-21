@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import "../auth.css";
 
-/* ── password strength helper ── */
 function getStrength(pwd: string): {
   score: number;
   label: string;
@@ -51,6 +50,10 @@ export default function RegisterPage() {
   const [showPwd, setShowPwd] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [otpLoading, setOtpLoading] = useState(false);
 
   const strength = useMemo(
     () => getStrength(formData.password),
@@ -84,10 +87,48 @@ export default function RegisterPage() {
       [name]: value,
     });
   };
+  const handleSendOtp = async () => {
+    try {
+      setError("");
+      setOtpLoading(true);
+
+      await api.post("/auth/send-otp", {
+        email: formData.email,
+      });
+
+      setOtpSent(true);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Failed to send OTP");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
+
+  const handleVerifyOtp = async () => {
+    try {
+      setError("");
+      setOtpLoading(true);
+
+      await api.post("/auth/verify-otp", {
+        email: formData.email,
+        otp,
+      });
+
+      setOtpVerified(true);
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Invalid OTP");
+    } finally {
+      setOtpLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+    if (!otpVerified) {
+      setError("Please verify your email first.");
+      return;
+    }
 
     const trimmedName = formData.name.trim();
 
@@ -168,9 +209,7 @@ export default function RegisterPage() {
           </div>
         )}
 
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
           <div>
             <label className="auth-label block mb-1.5">Full name</label>
             <div className="auth-input-wrap">
@@ -192,7 +231,6 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Email */}
           <div>
             <label className="auth-label block mb-1.5">Email address</label>
             <div className="auth-input-wrap">
@@ -210,7 +248,55 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Password */}
+          <div>
+            <label className="auth-label block mb-1.5">
+              Email Verification
+            </label>
+
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={handleSendOtp}
+                disabled={!formData.email || otpSent || otpLoading}
+                className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded-lg text-sm"
+              >
+                {otpLoading ? "Sending..." : otpSent ? "OTP Sent" : "Send OTP"}
+              </button>
+            </div>
+          </div>
+
+          {otpSent && !otpVerified && (
+            <div>
+              <label className="auth-label block mb-1.5">Enter OTP</label>
+
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Enter 6-digit OTP"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  className="auth-input"
+                />
+
+                <button
+                  type="button"
+                  onClick={handleVerifyOtp}
+                  disabled={otpLoading}
+                  className="bg-green-600 hover:bg-green-700 px-4 rounded-lg"
+                >
+                  Verify
+                </button>
+              </div>
+            </div>
+          )}
+
+          {otpVerified && (
+            <div className="auth-alert auth-alert-success">
+              <CheckCircle2 size={15} className="flex-shrink-0" />
+              Email verified successfully
+            </div>
+          )}
+
           <div>
             <label className="auth-label block mb-1.5">Password</label>
             <div className="auth-input-wrap">
@@ -236,7 +322,6 @@ export default function RegisterPage() {
               </button>
             </div>
 
-            {/* Strength meter */}
             {formData.password.length > 0 && (
               <div className="mt-2">
                 <div className="auth-strength-bar">
@@ -255,7 +340,6 @@ export default function RegisterPage() {
             )}
           </div>
 
-          {/* Terms */}
           <p
             className="text-xs leading-relaxed"
             style={{ color: "var(--auth-sub)" }}
@@ -271,7 +355,6 @@ export default function RegisterPage() {
             .
           </p>
 
-          {/* Submit */}
           <button
             type="submit"
             disabled={loading || success}
@@ -291,7 +374,6 @@ export default function RegisterPage() {
           </button>
         </form>
 
-        {/* Footer */}
         <p className="auth-sub text-sm text-center mt-6">
           Already have an account?{" "}
           <Link href="/login" className="auth-link">
