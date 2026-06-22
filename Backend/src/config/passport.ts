@@ -3,8 +3,7 @@ import {
   Strategy as GitHubStrategy,
 } from "passport-github2";
 
-console.log(process.env.GITHUB_CLIENT_ID);
-console.log(process.env.GITHUB_CLIENT_SECRET);
+
 passport.use(
   new GitHubStrategy(
     {

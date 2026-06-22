@@ -16,19 +16,6 @@ export const getRepository = async (
   return response.data;
 };
 
-// export const getRepositoryIssues = async (
-//   owner: string,
-//   repo: string
-// ) => {
-//   const response = await octokit.issues.listForRepo({
-//     owner,
-//     repo,
-//     state: "open",
-//   });
-
-//   return response.data;
-// };
-
 
 export const getReadme = async (
   owner: string,
@@ -171,11 +158,7 @@ export const getTrendingIssues =
     );
   };
 
-/*
-|--------------------------------------------------------------------------
-| Good First Issues
-|--------------------------------------------------------------------------
-*/
+
 
 export const getGoodFirstIssues =
   async () => {
@@ -210,12 +193,6 @@ export const getGoodFirstIssues =
       })
     );
   };
-
-/*
-|--------------------------------------------------------------------------
-| Search Issues
-|--------------------------------------------------------------------------
-*/
 
 export const searchIssues = async (
   query: string

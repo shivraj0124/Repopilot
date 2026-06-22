@@ -9,8 +9,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(passport.initialize());
-console.log("Hello IDs");
-console.log(process.env.GITHUB_CLIENT_ID);
+
 import swaggerUi from "swagger-ui-express";
 import { swaggerSpec } from "./config/swagger";
 import testRoutes from "./routes/test.routes";

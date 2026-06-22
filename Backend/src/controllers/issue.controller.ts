@@ -122,11 +122,6 @@ export const getTrendingIssuesController = async (
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| Good First Issues
-|--------------------------------------------------------------------------
-*/
 
 export const getGoodFirstIssuesController = async (
   req: Request,
@@ -147,11 +142,6 @@ export const getGoodFirstIssuesController = async (
   }
 };
 
-/*
-|--------------------------------------------------------------------------
-| Search Issues
-|--------------------------------------------------------------------------
-*/
 
 export const searchIssuesController = async (req: Request, res: Response) => {
   try {

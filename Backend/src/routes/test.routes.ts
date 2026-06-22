@@ -1,6 +1,8 @@
 import { Router } from "express";
 import prisma from "../config/prisma";
 import { getRepository } from "../services/github.service";
+import { generateRepositorySummary } from "../services/gemini.service";
+
 const router = Router();
 
 router.get("/db-test", async (_req, res) => {
@@ -39,7 +41,6 @@ router.get("/github-test", async (_req, res) => {
   }
 });
 
-import { generateRepositorySummary } from "../services/gemini.service";
 
 router.get("/gemini-test", async (_req, res) => {
   try {

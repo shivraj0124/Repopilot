@@ -63,7 +63,6 @@ export const sendOtpController = async (req: Request, res: Response) => {
   try {
     const { email } = req.body;
 
-    // Check existing user
     const existingUser = await prisma.user.findUnique({
       where: {
         email,

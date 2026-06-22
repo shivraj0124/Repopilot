@@ -41,6 +41,7 @@ export const saveAnalysis = async (
     },
   });
 };
+import { generateRepositorySummary } from "../services/gemini.service";
 
 export const getAnalysisHistory = async (userId: number) => {
   return prisma.analysis.findMany({
@@ -57,3 +58,5 @@ export const getAnalysisHistory = async (userId: number) => {
     },
   });
 };
+
+ 
