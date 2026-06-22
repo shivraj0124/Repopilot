@@ -59,4 +59,3 @@ export const getAnalysisHistory = async (userId: number) => {
   });
 };
 
- 

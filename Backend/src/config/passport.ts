@@ -12,7 +12,7 @@ passport.use(
       clientSecret:
         process.env.GITHUB_CLIENT_SECRET!,
       callbackURL:
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/github/callback`,
+        `${process.env.CALLBACK_URL}/auth/github/callback`,
     },
     async (
       accessToken,

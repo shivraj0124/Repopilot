@@ -5,25 +5,18 @@ import Link from "next/link";
 import api from "@/lib/axios";
 import { useRouter } from "next/navigation";
 import { FaGithub } from "react-icons/fa";
-import {
-  Mail,
-  Lock,
-  Eye,
-  EyeOff,
-  LogIn,
-  AlertCircle,
-} from "lucide-react";
+import { Mail, Lock, Eye, EyeOff, LogIn, AlertCircle } from "lucide-react";
 import "../auth.css"; // ← adjust path to wherever you put auth.css
-import {useAuth} from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
 export default function LoginPage() {
   const router = useRouter();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
-  const [loading, setLoading]   = useState(false);
-  const [showPwd, setShowPwd]   = useState(false);
-  const [error, setError]       = useState("");
-  const { setIsLoggedIn,refreshUser } = useAuth();
- 
+  const [loading, setLoading] = useState(false);
+  const [showPwd, setShowPwd] = useState(false);
+  const [error, setError] = useState("");
+  const { setIsLoggedIn, refreshUser } = useAuth();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError("");
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -39,7 +32,9 @@ export default function LoginPage() {
       await refreshUser();
       router.push("/dashboard");
     } catch (err: any) {
-      setError(err.response?.data?.message || "Login failed. Please try again.");
+      setError(
+        err.response?.data?.message || "Login failed. Please try again.",
+      );
     } finally {
       setLoading(false);
     }
@@ -55,7 +50,6 @@ export default function LoginPage() {
 
       {/* Card */}
       <div className="auth-card relative w-full max-w-md rounded-2xl px-8 py-10 z-10">
-
         {/* Logo */}
         <div className="flex flex-col items-center mb-8">
           <div className="auth-logo-ring w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
@@ -69,8 +63,12 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* GitHub OAuth (wired up separately — this is UI only) */}
-        <button className="auth-oauth-btn mb-5">
+        <button
+          onClick={() => {
+            window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/github`;
+          }}
+          className="auth-oauth-btn mb-5"
+        >
           <FaGithub size={17} />
           Continue with GitHub
         </button>
@@ -170,7 +168,10 @@ export default function LoginPage() {
         </p>
 
         {/* Branding */}
-        <p className="text-center mt-6 text-xs" style={{ color: "var(--auth-sub)", opacity: 0.5 }}>
+        <p
+          className="text-center mt-6 text-xs"
+          style={{ color: "var(--auth-sub)", opacity: 0.5 }}
+        >
           Secured by RepoPilot · AI-powered open source tools
         </p>
       </div>

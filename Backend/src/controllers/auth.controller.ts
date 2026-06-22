@@ -187,5 +187,7 @@ export const githubCallbackController = async (req: any, res: Response) => {
     secure: false,
   });
 
-  res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+  // res.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+  res.redirect(`${process.env.FRONTEND_URL}/github-success`);
+
 };
