@@ -77,11 +77,10 @@ export default function Navbar() {
 
   return (
     <>
-      {/* ════════════ NAV BAR ════════════ */}
-      <nav className={`rp-nav sticky top-0 z-50 ${scrolled ? "scrolled" : ""}`}>
+     <nav className={`rp-nav sticky top-0 z-50 ${scrolled ? "scrolled" : ""}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-[60px] flex items-center justify-between gap-3">
 
-          {/* ── Logo ── */}
+         
           <Link href="/" className="flex items-center gap-2.5 flex-shrink-0">
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-blue-700 flex items-center justify-center shadow-lg shadow-blue-900/40">
               <FaGithub className="text-white text-base" />
@@ -98,7 +97,6 @@ export default function Navbar() {
             </span>
           </Link>
 
-          {/* ── Desktop centre links ── */}
           <div className="hidden md:flex items-center gap-1">
             {NAV_LINKS.map(({ href, label, Icon }) => (
               <Link

@@ -35,7 +35,6 @@ function GridBackground() {
   );
 }
 
-/* ── Skeleton card ── */
 function SkeletonCard() {
   return (
     <div className="explore-card">
@@ -50,7 +49,6 @@ function SkeletonCard() {
   );
 }
 
-/* ── Empty state ── */
 function EmptyState() {
   return (
     <div className="dash-empty">
@@ -58,22 +56,23 @@ function EmptyState() {
         <Search size={24} />
       </div>
       <p className="dash-empty-title">No issues found</p>
-      <p className="dash-empty-sub">Try a different search term or switch tabs</p>
+      <p className="dash-empty-sub">
+        Try a different search term or switch tabs
+      </p>
     </div>
   );
 }
 
-/* ── difficulty colour helper ── */
 function diffStyle(raw: string) {
   const d = raw?.toLowerCase() ?? "";
-  if (d.includes("beginner") || d.includes("easy")) return { chip: "dash-chip-emerald" };
+  if (d.includes("beginner") || d.includes("easy"))
+    return { chip: "dash-chip-emerald" };
   if (d.includes("intermediate")) return { chip: "dash-chip-amber" };
   if (d.includes("advanced")) return { chip: "dash-chip-orange" };
   if (d.includes("expert")) return { chip: "dash-chip-red" };
   return { chip: "dash-chip-blue" };
 }
 
-/* ── Analyze button with login-gated tooltip ── */
 function AnalyzeButton({
   isLoggedIn,
   isLoading,
@@ -86,7 +85,10 @@ function AnalyzeButton({
   if (!isLoggedIn) {
     return (
       <div className="relative group flex-1">
-        <button disabled className="explore-btn-primary opacity-60 cursor-not-allowed">
+        <button
+          disabled
+          className="explore-btn-primary opacity-60 cursor-not-allowed"
+        >
           <Sparkles size={14} />
           Analyze
         </button>
@@ -121,33 +123,55 @@ function AnalyzeButton({
 export default function IssuesPage() {
   const [issues, setIssues] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [activeTab, setActiveTab] = useState("trending");
   const [issueAnalyses, setIssueAnalyses] = useState<Record<number, any>>({});
   const [loadingIssueId, setLoadingIssueId] = useState<number | null>(null);
   const { isLoggedIn } = useAuth();
 
-  const fetchTrendingIssues = async () => {
+  const fetchTrendingIssues = async (
+    pageNumber: number = 1,
+    append: boolean = false,
+  ) => {
     try {
-      setLoading(true);
-      const response = await api.get("/issues/trending");
-      setIssues(response.data.issues);
+      append ? setLoadingMore(true) : setLoading(true);
+
+      const response = await api.get(`/issues/trending?page=${pageNumber}`);
+
+      if (append) {
+        setIssues((prev) => [...prev, ...response.data.issues]);
+      } else {
+        setIssues(response.data.issues);
+      }
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
-  const fetchGoodFirstIssues = async () => {
+  const fetchGoodFirstIssues = async (
+    pageNumber: number = 1,
+    append: boolean = false,
+  ) => {
     try {
-      setLoading(true);
-      const response = await api.get("/issues/good-first");
-      setIssues(response.data.issues);
+      append ? setLoadingMore(true) : setLoading(true);
+
+      const response = await api.get(`/issues/good-first?page=${pageNumber}`);
+
+      if (append) {
+        setIssues((prev) => [...prev, ...response.data.issues]);
+      } else {
+        setIssues(response.data.issues);
+      }
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
@@ -171,8 +195,14 @@ export default function IssuesPage() {
       const repoUrl = `https://github.com/${repoName}`;
       const issueNumber = issue.url.split("/").pop();
 
-      const response = await api.post("/issues/analyze", { repoUrl, issueNumber });
-      setIssueAnalyses((prev) => ({ ...prev, [issue.id]: response.data.analysis }));
+      const response = await api.post("/issues/analyze", {
+        repoUrl,
+        issueNumber,
+      });
+      setIssueAnalyses((prev) => ({
+        ...prev,
+        [issue.id]: response.data.analysis,
+      }));
     } catch (error) {
       console.error(error);
     } finally {
@@ -180,8 +210,20 @@ export default function IssuesPage() {
     }
   };
 
+  const handleLoadMore = async () => {
+    const nextPage = page + 1;
+
+    setPage(nextPage);
+
+    if (activeTab === "trending") {
+      await fetchTrendingIssues(nextPage, true);
+    } else {
+      await fetchGoodFirstIssues(nextPage, true);
+    }
+  };
+
   useEffect(() => {
-    fetchTrendingIssues();
+    fetchTrendingIssues(1);
   }, []);
 
   return (
@@ -192,8 +234,6 @@ export default function IssuesPage() {
         <GridBackground />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 z-10">
-
-          {/* ── Heading ── */}
           <div className="mb-8">
             <div className="dash-eyebrow mb-4">
               <Flame size={11} />
@@ -201,11 +241,11 @@ export default function IssuesPage() {
             </div>
             <h1 className="explore-hero-h1">Explore Issues</h1>
             <p className="explore-hero-sub">
-              Discover trending and beginner-friendly GitHub issues powered by AI.
+              Discover trending and beginner-friendly GitHub issues powered by
+              AI.
             </p>
           </div>
 
-          {/* ── Search ── */}
           <div className="explore-search-card flex flex-col sm:flex-row gap-3 mb-6">
             <div className="explore-search-wrap">
               <Search size={15} className="explore-search-icon" />
@@ -223,23 +263,29 @@ export default function IssuesPage() {
             </button>
           </div>
 
-          {/* ── Tabs ── */}
           <div className="flex gap-3 mb-8">
             <button
-              onClick={() => { setActiveTab("trending"); fetchTrendingIssues(); }}
+              onClick={() => {
+                setActiveTab("trending");
+                setPage(1);
+                fetchTrendingIssues(1);
+              }}
               className={`explore-tab ${activeTab === "trending" ? "explore-tab-active" : ""}`}
             >
               Trending
             </button>
             <button
-              onClick={() => { setActiveTab("good-first"); fetchGoodFirstIssues(); }}
+              onClick={() => {
+                setActiveTab("good-first");
+                setPage(1);
+                fetchGoodFirstIssues(1);
+              }}
               className={`explore-tab ${activeTab === "good-first" ? "explore-tab-active" : ""}`}
             >
               Good First Issues
             </button>
           </div>
 
-          {/* ── Loading ── */}
           {loading && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, index) => (
@@ -248,13 +294,14 @@ export default function IssuesPage() {
             </div>
           )}
 
-          {/* ── Issues ── */}
           {!loading && issues.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {issues.map((issue) => {
                 const analysis = issueAnalyses[issue.id];
                 const isLoading = loadingIssueId === issue.id;
-                const diff = analysis ? diffStyle(analysis.difficulty ?? "") : null;
+                const diff = analysis
+                  ? diffStyle(analysis.difficulty ?? "")
+                  : null;
 
                 return (
                   <div
@@ -263,7 +310,9 @@ export default function IssuesPage() {
                   >
                     {/* Title */}
                     <div className="flex items-start justify-between gap-3">
-                      <h2 className="explore-card-title !text-base leading-snug">{issue.title}</h2>
+                      <h2 className="explore-card-title !text-base leading-snug">
+                        {issue.title}
+                      </h2>
                       <a
                         href={issue.url}
                         target="_blank"
@@ -284,15 +333,20 @@ export default function IssuesPage() {
                     {/* Comments */}
                     <div className="explore-meta flex items-center gap-1.5 mt-3">
                       <MessageSquare size={13} />
-                      {issue.comments} {issue.comments === 1 ? "comment" : "comments"}
+                      {issue.comments}{" "}
+                      {issue.comments === 1 ? "comment" : "comments"}
                     </div>
 
                     {/* Labels */}
                     {issue.labels?.length > 0 && (
                       <div className="flex flex-wrap gap-2 mt-4">
-                        {issue.labels.slice(0, 3).map((label: string, index: number) => (
-                          <span key={index} className="explore-label-chip">{label}</span>
-                        ))}
+                        {issue.labels
+                          .slice(0, 3)
+                          .map((label: string, index: number) => (
+                            <span key={index} className="explore-label-chip">
+                              {label}
+                            </span>
+                          ))}
                       </div>
                     )}
 
@@ -322,14 +376,18 @@ export default function IssuesPage() {
                               <AlertCircle size={11} />
                               Problem
                             </p>
-                            <p className="dash-text-body !text-xs leading-relaxed">{analysis.problem}</p>
+                            <p className="dash-text-body !text-xs leading-relaxed">
+                              {analysis.problem}
+                            </p>
                           </div>
                           <div>
                             <p className="explore-section-label flex items-center gap-1.5">
                               <GitMerge size={11} />
                               Root Cause
                             </p>
-                            <p className="dash-text-body !text-xs leading-relaxed">{analysis.rootCause}</p>
+                            <p className="dash-text-body !text-xs leading-relaxed">
+                              {analysis.rootCause}
+                            </p>
                           </div>
                         </div>
 
@@ -339,7 +397,9 @@ export default function IssuesPage() {
                               <Gauge size={11} />
                               Difficulty
                             </p>
-                            <span className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full ${diff!.chip}`}>
+                            <span
+                              className={`inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full ${diff!.chip}`}
+                            >
                               {analysis.difficulty}
                             </span>
                           </div>
@@ -364,9 +424,16 @@ export default function IssuesPage() {
                               Relevant Files
                             </p>
                             <div className="flex flex-wrap gap-1.5">
-                              {analysis.relevantFiles.map((file: string, index: number) => (
-                                <span key={index} className="explore-file-chip">{file}</span>
-                              ))}
+                              {analysis.relevantFiles.map(
+                                (file: string, index: number) => (
+                                  <span
+                                    key={index}
+                                    className="explore-file-chip"
+                                  >
+                                    {file}
+                                  </span>
+                                ),
+                              )}
                             </div>
                           </div>
                         )}
@@ -378,12 +445,21 @@ export default function IssuesPage() {
                               Contribution Roadmap
                             </p>
                             <ol className="space-y-2 mt-1">
-                              {analysis.roadmap.map((step: string, index: number) => (
-                                <li key={index} className="flex items-start gap-3">
-                                  <span className="dash-step-num mt-0.5">{index + 1}</span>
-                                  <span className="dash-text-body !text-xs leading-relaxed pt-0.5">{step}</span>
-                                </li>
-                              ))}
+                              {analysis.roadmap.map(
+                                (step: string, index: number) => (
+                                  <li
+                                    key={index}
+                                    className="flex items-start gap-3"
+                                  >
+                                    <span className="dash-step-num mt-0.5">
+                                      {index + 1}
+                                    </span>
+                                    <span className="dash-text-body !text-xs leading-relaxed pt-0.5">
+                                      {step}
+                                    </span>
+                                  </li>
+                                ),
+                              )}
                             </ol>
                           </div>
                         )}
@@ -396,6 +472,25 @@ export default function IssuesPage() {
           )}
 
           {!loading && issues.length === 0 && <EmptyState />}
+          {!loading && issues.length > 0 && (
+            <div className="flex justify-center mt-10">
+              <button
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                className="explore-search-btn min-w-[180px]"
+              >
+                {loadingMore ? (
+                  <div className="flex gap-2 justify-center items-center">
+                    <Loader2 size={16} className="animate-spin" />
+                    <span> Loading...</span>
+                  </div>
+                  
+                ) : (
+                  "Load More Issues"
+                )}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 

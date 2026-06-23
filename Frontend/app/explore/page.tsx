@@ -21,7 +21,6 @@ function GridBackground() {
   );
 }
 
-/* ── Skeleton card ── */
 function SkeletonCard() {
   return (
     <div className="explore-card">
@@ -39,7 +38,6 @@ function SkeletonCard() {
   );
 }
 
-/* ── Empty state ── */
 function EmptyState() {
   return (
     <div className="dash-empty">
@@ -52,11 +50,19 @@ function EmptyState() {
   );
 }
 
-/* ── Analyze button with login-gated tooltip ── */
-function AnalyzeButton({ repoUrl, isLoggedIn }: { repoUrl: string; isLoggedIn: boolean }) {
+function AnalyzeButton({
+  repoUrl,
+  isLoggedIn,
+}: {
+  repoUrl: string;
+  isLoggedIn: boolean;
+}) {
   if (isLoggedIn) {
     return (
-      <a href={`/dashboard?repo=${encodeURIComponent(repoUrl)}`} className="explore-btn-primary mt-6">
+      <a
+        href={`/dashboard?repo=${encodeURIComponent(repoUrl)}`}
+        className="explore-btn-primary mt-6"
+      >
         <Sparkles size={14} />
         Analyze Repository
       </a>
@@ -65,7 +71,10 @@ function AnalyzeButton({ repoUrl, isLoggedIn }: { repoUrl: string; isLoggedIn: b
 
   return (
     <div className="relative group mt-6">
-      <button disabled className="explore-btn-primary opacity-60 cursor-not-allowed">
+      <button
+        disabled
+        className="explore-btn-primary opacity-60 cursor-not-allowed"
+      >
         <Sparkles size={14} />
         Analyze Repository
       </button>
@@ -79,22 +88,48 @@ function AnalyzeButton({ repoUrl, isLoggedIn }: { repoUrl: string; isLoggedIn: b
 export default function ExplorePage() {
   const [repositories, setRepositories] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
   const { isLoggedIn } = useAuth();
 
-  const fetchRepositories = async () => {
+  const fetchRepositories = async (
+    pageNumber: number = 1,
+    append: boolean = false,
+  ) => {
     try {
-      setLoading(true);
-      const response = await api.get("/explore/repositories");
-      setRepositories(response.data.repositories);
+      if (append) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await api.get(
+        `/explore/repositories?page=${pageNumber}`,
+      );
+
+      if (append) {
+        setRepositories((prev) => [...prev, ...response.data.repositories]);
+      } else {
+        setRepositories(response.data.repositories);
+      }
     } catch (error) {
       console.error(error);
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
+  const handleLoadMore = async () => {
+    const nextPage = page + 1;
+
+    setPage(nextPage);
+
+    await fetchRepositories(nextPage, true);
+  };
+
   useEffect(() => {
-    fetchRepositories();
+    fetchRepositories(1);
   }, []);
 
   return (
@@ -126,7 +161,6 @@ export default function ExplorePage() {
             </div>
           )}
 
-          {/* ── Repository Cards ── */}
           {!loading && repositories.length > 0 && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {repositories.map((repo) => (
@@ -159,7 +193,9 @@ export default function ExplorePage() {
                       {repo.forks?.toLocaleString?.() ?? repo.forks}
                     </span>
                     {repo.language && (
-                      <span className="explore-lang-chip ml-auto">{repo.language}</span>
+                      <span className="explore-lang-chip ml-auto">
+                        {repo.language}
+                      </span>
                     )}
                   </div>
 
@@ -170,6 +206,17 @@ export default function ExplorePage() {
           )}
 
           {!loading && repositories.length === 0 && <EmptyState />}
+          {!loading && repositories.length > 0 && (
+            <div className="flex justify-center mt-10">
+              <button
+                onClick={handleLoadMore}
+                disabled={loadingMore}
+                className="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-700 font-medium transition disabled:opacity-60"
+              >
+                {loadingMore ? "Loading..." : "Load More"}
+              </button>
+            </div>
+          )}
         </div>
       </section>
 
