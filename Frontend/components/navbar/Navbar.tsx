@@ -15,7 +15,8 @@ import {
   HiOutlineX,
 } from "react-icons/hi";
 import { useAuth } from "@/context/AuthContext";
-import "@/styles/dashboard.css"
+import "@/styles/dashboard.css";
+
 function deleteCookie(name: string) {
   document.cookie = `${name}=; Max-Age=0; path=/`;
 }
@@ -76,7 +77,6 @@ export default function Navbar() {
 
   return (
     <>
-     
       {/* ════════════ NAV BAR ════════════ */}
       <nav className={`rp-nav sticky top-0 z-50 ${scrolled ? "scrolled" : ""}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-8 h-[60px] flex items-center justify-between gap-3">
