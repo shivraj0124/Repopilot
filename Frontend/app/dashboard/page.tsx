@@ -153,7 +153,6 @@ export default function DashboardPage() {
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-10 z-10">
 
-          {/* ── Header row ── */}
           <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
             <div>
               <div className="dash-eyebrow mb-3">
@@ -176,7 +175,6 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* ── URL Input card ── */}
           <div className="dash-input-card">
             <div className="dash-input-accent-line" />
 
@@ -225,10 +223,9 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          {/* ── Skeleton ── */}
+        
           {loading && <SkeletonLoader />}
 
-          {/* ── Post-analysis header ── */}
           {analysis && !loading && (
             <div className="mt-6 flex flex-wrap items-center gap-3 px-1">
               <div className="flex items-center gap-2 text-sm font-medium" style={{ color: "var(--text-muted)" }}>
@@ -241,7 +238,6 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* ── Tabs ── */}
           {(analysis || activeTab === "history") && !loading && (
             <div className="dash-tabs mt-5">
               {TABS.filter((t) => analysis || t.key === "history").map(({ key, label, Icon }) => {
@@ -264,7 +260,6 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* ── Tab content ── */}
           {!loading && (
             <div className="mt-4">
               {activeTab === "analysis" && analysis && (
@@ -281,7 +276,6 @@ export default function DashboardPage() {
               )}
               {activeTab === "history" && <RepositoryHistory history={history} />}
 
-              {/* empty state */}
               {!analysis && activeTab !== "history" && (
                 <div className="dash-empty">
                   <div className="dash-empty-icon">

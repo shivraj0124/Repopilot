@@ -42,7 +42,6 @@ export default function AboutPage() {
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 z-10">
 
-          {/* ── Heading ── */}
           <div className="dash-eyebrow mb-5">
             <Sparkles size={11} />
             About Us
@@ -53,7 +52,6 @@ export default function AboutPage() {
             GitHub repositories faster and contribute to open-source projects with confidence.
           </p>
 
-          {/* ── Feature cards ── */}
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-12">
             {FEATURES.map(({ icon: Icon, title, desc }) => (
               <div key={title} className="dash-card p-6">
@@ -66,7 +64,6 @@ export default function AboutPage() {
             ))}
           </div>
 
-          {/* ── Mission ── */}
           <div className="dash-card p-6 sm:p-8 mt-6">
             <div className="flex items-center gap-2.5 mb-4">
               <div className="dash-icon-badge-blue">

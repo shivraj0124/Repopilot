@@ -34,7 +34,7 @@ export default function ContactPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
-    // wire this up to your actual contact endpoint
+
     await new Promise((r) => setTimeout(r, 800));
     setSubmitting(false);
     setSubmitted(true);
@@ -50,7 +50,6 @@ export default function ContactPage() {
 
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 py-12 sm:py-16 z-10">
 
-          {/* ── Heading ── */}
           <div className="dash-eyebrow mb-5">
             <MessageCircle size={11} />
             Get in Touch
@@ -60,7 +59,6 @@ export default function ContactPage() {
             Have feedback, suggestions, or questions about RepoPilot? We'd love to hear from you.
           </p>
 
-          {/* ── Contact details ── */}
           <div className="dash-card p-6 sm:p-8 mt-10">
             <div className="grid sm:grid-cols-3 gap-6">
               {CONTACT_DETAILS.map(({ icon: Icon, label, value }) => (
@@ -77,7 +75,7 @@ export default function ContactPage() {
             </div>
           </div>
 
-          {/* ── Form ── */}
+         
           <div className="dash-card p-6 sm:p-8 mt-6">
             <h2 className="static-section-title mb-6">Send a Message</h2>
 
