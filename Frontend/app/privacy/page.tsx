@@ -52,7 +52,7 @@ export default function PrivacyPage() {
 
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-12 sm:py-16 z-10">
 
-          {/* ── Heading ── */}
+        
           <div className="dash-eyebrow mb-5">
             <Shield size={11} />
             Legal
@@ -62,7 +62,6 @@ export default function PrivacyPage() {
             Your privacy matters to us. Here's how RepoPilot collects, uses, and protects your information.
           </p>
 
-          {/* ── Sections ── */}
           <div className="dash-card p-6 sm:p-8 mt-10">
             <div className="space-y-8">
               {SECTIONS.map(({ icon: Icon, title, body }, i) => (

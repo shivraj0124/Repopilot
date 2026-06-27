@@ -140,7 +140,7 @@ export default function ExplorePage() {
         <GridBackground />
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-12 z-10">
-          {/* ── Heading ── */}
+         
           <div className="mb-10">
             <div className="dash-eyebrow mb-4">
               <Sparkles size={11} />
@@ -152,7 +152,7 @@ export default function ExplorePage() {
             </p>
           </div>
 
-          {/* ── Loading ── */}
+         
           {loading && (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {Array.from({ length: 6 }).map((_, index) => (

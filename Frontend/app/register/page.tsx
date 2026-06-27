@@ -161,15 +161,15 @@ export default function RegisterPage() {
 
   return (
     <div className="auth-page px-4 py-10">
-      {/* Background */}
+    
       <div className="auth-grid-bg">
         <div className="auth-grid-lines" />
         <div className="auth-radial-glow" />
       </div>
 
-      {/* Card */}
+     
       <div className="auth-card relative w-full max-w-md rounded-2xl px-8 py-10 z-10">
-        {/* Logo */}
+        
         <div className="flex flex-col items-center mb-8">
           <div className="auth-logo-ring w-14 h-14 rounded-2xl flex items-center justify-center mb-4">
             <FaGithub className="text-blue-400 text-2xl" />
@@ -182,7 +182,7 @@ export default function RegisterPage() {
           </p>
         </div>
 
-        {/* GitHub OAuth */}
+       
         <button
           className="auth-oauth-btn mb-5"
           onClick={() => {
@@ -200,7 +200,7 @@ export default function RegisterPage() {
           <div className="flex-1 border-t auth-separator" />
         </div>
 
-        {/* Alerts */}
+      
         {error && (
           <div className="auth-alert auth-alert-error mb-5">
             <AlertCircle size={15} className="flex-shrink-0" />

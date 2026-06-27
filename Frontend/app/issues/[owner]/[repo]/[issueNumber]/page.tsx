@@ -133,13 +133,12 @@ export default function AnalyzeIssuePage() {
           </div>
         </div>
 
-        {/* AI Analysis */}
+       
         <div className="mt-8 bg-zinc-900 border border-zinc-800 rounded-2xl p-8 space-y-8">
           <h2 className="text-3xl font-bold">
             AI Issue Analysis
           </h2>
 
-          {/* Problem */}
           <div>
             <div className="flex items-center gap-2 mb-3">
               <AlertCircle size={20} />
@@ -154,7 +153,6 @@ export default function AnalyzeIssuePage() {
             </p>
           </div>
 
-          {/* Root Cause */}
           <div>
             <h3 className="text-2xl font-semibold mb-3">
               Root Cause
@@ -165,7 +163,6 @@ export default function AnalyzeIssuePage() {
             </p>
           </div>
 
-          {/* Difficulty + Time */}
           <div className="flex gap-6 flex-wrap">
             <div className="bg-zinc-950 border border-zinc-800 rounded-xl p-5">
               <h3 className="font-semibold mb-3">
@@ -192,7 +189,6 @@ export default function AnalyzeIssuePage() {
             </div>
           </div>
 
-          {/* Relevant Files */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <Folder size={20} />
@@ -219,7 +215,6 @@ export default function AnalyzeIssuePage() {
             </div>
           </div>
 
-          {/* Roadmap */}
           <div>
             <div className="flex items-center gap-2 mb-4">
               <GitBranch size={20} />

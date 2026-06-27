@@ -22,16 +22,15 @@ export default function GitHubSuccessPage() {
     <div
       className="rp-page min-h-screen flex flex-col items-center justify-center px-6 text-center"
     >
-      {/* Grid background */}
       <div className="rp-grid-bg" aria-hidden="true">
         <div className="rp-grid-lines" />
         <div className="rp-radial-fade" />
       </div>
 
       <div className="relative z-10 flex flex-col items-center gap-6">
-        {/* GitHub icon with spinner ring */}
+   
         <div className="relative flex items-center justify-center">
-          {/* Rotating ring */}
+     
           <svg
             className="absolute w-20 h-20 animate-spin"
             viewBox="0 0 80 80"
@@ -49,7 +48,7 @@ export default function GitHubSuccessPage() {
             />
           </svg>
 
-          {/* Icon badge */}
+       
           <div
             className="w-14 h-14 rounded-2xl flex items-center justify-center shadow-lg"
             style={{
@@ -61,7 +60,7 @@ export default function GitHubSuccessPage() {
           </div>
         </div>
 
-        {/* Text */}
+        
         <div>
           <h1
             className="text-xl sm:text-2xl font-bold tracking-tight"
@@ -77,7 +76,7 @@ export default function GitHubSuccessPage() {
           </p>
         </div>
 
-        {/* Animated dots */}
+   
         <div className="flex items-center gap-2">
           {[0, 1, 2].map((i) => (
             <span
