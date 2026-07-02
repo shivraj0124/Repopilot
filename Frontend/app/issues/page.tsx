@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
-
+import { useRouter } from "next/navigation";
 import api from "@/lib/axios";
 
 import {
@@ -130,7 +130,7 @@ export default function IssuesPage() {
   const [issueAnalyses, setIssueAnalyses] = useState<Record<number, any>>({});
   const [loadingIssueId, setLoadingIssueId] = useState<number | null>(null);
   const { isLoggedIn } = useAuth();
-
+  const router = useRouter();
   const fetchTrendingIssues = async (
     pageNumber: number = 1,
     append: boolean = false,
@@ -179,7 +179,7 @@ export default function IssuesPage() {
     if (!search.trim()) return;
     try {
       setLoading(true);
-      const response = await api.get(`/issues/search?q=${search}`);
+      const response = await api.get(`/issues/search?q=${search}&page=${page}`);
       setIssues(response.data.issues);
     } catch (error) {
       console.error(error);
@@ -188,28 +188,35 @@ export default function IssuesPage() {
     }
   };
 
-  const handleAnalyzeIssue = async (issue: any) => {
-    try {
-      setLoadingIssueId(issue.id);
-      const repoName = issue.repository;
-      const repoUrl = `https://github.com/${repoName}`;
-      const issueNumber = issue.url.split("/").pop();
+  // const handleAnalyzeIssue = async (issue: any) => {
+  //   try {
+  //     setLoadingIssueId(issue.id);
+  //     const repoName = issue.repository;
+  //     const repoUrl = `https://github.com/${repoName}`;
+  //     const issueNumber = issue.url.split("/").pop();
 
-      const response = await api.post("/issues/analyze", {
-        repoUrl,
-        issueNumber,
-      });
-      setIssueAnalyses((prev) => ({
-        ...prev,
-        [issue.id]: response.data.analysis,
-      }));
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoadingIssueId(null);
-    }
-  };
+  //     const response = await api.post("/issues/analyze", {
+  //       repoUrl,
+  //       issueNumber,
+  //     });
+  //     setIssueAnalyses((prev) => ({
+  //       ...prev,
+  //       [issue.id]: response.data.analysis,
+  //     }));
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     setLoadingIssueId(null);
+  //   }
+  // };
+  const handleAnalyzeIssue = (issue: any) => {
+  const [owner, repo] = issue.repository.split("/");
+  const issueNumber = issue.url.split("/").pop();
 
+  router.push(
+    `/issues/${owner}/${repo}/${issueNumber}`
+  );
+};
   const handleLoadMore = async () => {
     const nextPage = page + 1;
 
@@ -367,7 +374,6 @@ export default function IssuesPage() {
                       />
                     </div>
 
-                    {/* ── Analysis panel ── */}
                     {analysis && (
                       <div className="explore-analysis-panel space-y-5">
                         <div className="grid sm:grid-cols-2 gap-4">

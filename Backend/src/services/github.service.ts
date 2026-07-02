@@ -114,49 +114,32 @@ export const getTrendingIssues = async (page: number) => {
   }));
 };
 
-export const getGoodFirstIssues =
-  async (page: number) => {
-    const response =
-      await octokit.request(
-        "GET /search/issues",
-        {
-          q: 'is:issue is:open label:"good first issue"',
-          sort: "comments",
-          order: "desc",
-          per_page: 9,
-          page,
-        }
-      );
+export const getGoodFirstIssues = async (page: number) => {
+  const response = await octokit.request("GET /search/issues", {
+    q: 'is:issue is:open label:"good first issue"',
+    sort: "comments",
+    order: "desc",
+    per_page: 9,
+    page,
+  });
 
-    return response.data.items.map(
-      (issue: any) => ({
-        id: issue.id,
-        title:
-          issue.title,
-        url:
-          issue.html_url,
-        comments:
-          issue.comments,
-        repository:
-          issue.repository_url
-            .split("/")
-            .slice(-2)
-            .join("/"),
-        labels:
-          issue.labels?.map(
-            (label: any) =>
-              label.name
-          ) || [],
-      })
-    );
-  };
+  return response.data.items.map((issue: any) => ({
+    id: issue.id,
+    title: issue.title,
+    url: issue.html_url,
+    comments: issue.comments,
+    repository: issue.repository_url.split("/").slice(-2).join("/"),
+    labels: issue.labels?.map((label: any) => label.name) || [],
+  }));
+};
 
-export const searchIssues = async (query: string) => {
+export const searchIssues = async (query: string, page: number) => {
   const response = await octokit.request("GET /search/issues", {
     q: `is:issue is:open ${query}`,
     sort: "comments",
     order: "desc",
-    per_page: 20,
+    per_page: 9,
+    page
   });
 
   return response.data.items.map((issue: any) => ({

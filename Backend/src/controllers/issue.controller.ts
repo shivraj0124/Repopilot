@@ -134,11 +134,24 @@ export const getTrendingIssuesController = async (
 ) => {
   try {
     const page = Number(req.query.page) || 1;
+    const cacheKey = `issues:trending:${page}`;
+    const cachedIssues = await getCache(cacheKey);
+
+    if (cachedIssues) {
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        page,
+        issues: cachedIssues,
+      });
+    }
 
     const issues = await getTrendingIssues(page);
+    await setCache(cacheKey, issues, 60 * 30);
 
     res.status(200).json({
       success: true,
+      cached: false,
       page,
       issues,
     });
@@ -156,10 +169,24 @@ export const getGoodFirstIssuesController = async (
 ) => {
   try {
     const page = Number(req.query.page) || 1;
+    const cacheKey = `issues:good-first:${page}`;
+    const cachedIssues = await getCache(cacheKey);
+
+    if (cachedIssues) {
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        page,
+        issues: cachedIssues,
+      });
+    }
+
     const issues = await getGoodFirstIssues(page);
+    await setCache(cacheKey, issues, 60 * 30);
 
     res.status(200).json({
       success: true,
+      cached: false,
       page,
       issues,
     });
@@ -171,14 +198,41 @@ export const getGoodFirstIssuesController = async (
   }
 };
 
-export const searchIssuesController = async (req: Request, res: Response) => {
+export const searchIssuesController = async (
+  req: Request,
+  res: Response
+) => {
   try {
-    const query = req.query.q as string;
+    const q = req.query.q as string;
+    const query = String(q).trim();
 
-    const issues = await searchIssues(query);
+    const page = Number(req.query.page) || 1;
+
+    const cacheKey = `issues:search:${query.toLowerCase()}:${page}`;
+
+    const cachedIssues = await getCache(cacheKey);
+
+    if (cachedIssues) {
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        page,
+        issues: cachedIssues,
+      });
+    }
+
+    const issues = await searchIssues(query, page);
+
+    await setCache(
+      cacheKey,
+      issues,
+      60 * 15 // 15 minutes
+    );
 
     res.status(200).json({
       success: true,
+      cached: false,
+      page,
       issues,
     });
   } catch (error: any) {

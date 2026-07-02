@@ -6,7 +6,6 @@ import { useParams } from "next/navigation";
 
 import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
-
 import api from "@/lib/axios";
 
 import {
