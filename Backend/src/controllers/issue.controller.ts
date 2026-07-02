@@ -1,4 +1,5 @@
 import { Request, Response } from "express";
+import { getCache, setCache } from "../services/cache.service";
 import { extractRepoInfo } from "../utils/github";
 import {
   getIssue,
@@ -17,6 +18,16 @@ export const analyzeIssueController = async (req: Request, res: Response) => {
     const { repoUrl, issueNumber } = req.body;
 
     const { owner, repo } = extractRepoInfo(repoUrl);
+    const cacheKey = `issue:${owner}:${repo}:${issueNumber}`;
+    const cachedAnalysis = await getCache(cacheKey);
+
+    if (cachedAnalysis) {
+      return res.status(200).json({
+        success: true,
+        cached: true,
+        ...cachedAnalysis,
+      });
+    }
 
     const issue = await getIssue(owner, repo, Number(issueNumber));
 
@@ -44,8 +55,22 @@ export const analyzeIssueController = async (req: Request, res: Response) => {
       );
     }
 
+    const responseData = {
+      issue: {
+        number: issue.number,
+        title: issue.title,
+        state: issue.state,
+        author: issue.user?.login,
+        url: issue.html_url,
+      },
+      analysis,
+      savedIssueAnalysis,
+    };
+    await setCache(cacheKey, responseData);
+
     res.status(200).json({
       success: true,
+      cached: false,
       issue: {
         number: issue.number,
         title: issue.title,
