@@ -11,7 +11,7 @@ export const getCache = async (key: string) => {
 export const setCache = async (
   key: string,
   value: any,
-  expiry = 60 * 60 * 24 // 24 Hours
+  expiry = 60 * 60 * 24 
 ) => {
   await redisClient.set(
     key,
